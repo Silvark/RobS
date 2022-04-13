@@ -79,6 +79,7 @@ int main()
     infG = posY+hauteurjoueur;
     infD = posY+hauteurjoueur+largeurjoueur;
 
+
     std::vector<sf::RectangleShape> map = tilesmaping(level, rects);
 
     while (window.isOpen())
@@ -91,53 +92,18 @@ int main()
 
         }
 
-
-        //std::cout << level[10][0]<< std::endl;
-
-        //std::cout << level[positiontableau(posY+200)][positiontableau(posX)]<< std::endl;
-
-        avancegravite = 1;
-        std::cout << "debut"<< std::endl;
-        while(testdistance == 1 && level[positiontableau(posY+avancegravite)][positiontableau(posX)]!=1){
-
-            if(avancegravite<gravity){
-
-                if(level[positiontableau(posY+avancegravite)][positiontableau(posX)]!=1){
-                    avancegravite = avancegravite + 1;
-                    std::cout << "il ny a pas de 1 dans le tableau si j'avance de 1  "<< avancegravite<< std::endl;
-                }
-                else{
-                    std::cout << "il y a  de 1 dans le tableau si j'avance de 1....."<< std::endl;
-                    posY = posY + avancegravite;
-                    testdistance = 0;
-                }
-            }
-            else{
-                std::cout << "nous avancons de la gravité  "<< gravity << std::endl;
-                posY = posY + gravity;
-                gravity = gravity + 1;
-                testdistance = 0;
-            }
-
-            usleep(50000);
-        }
-
-        std::cout << "finit0"<< std::endl;
-        testdistance = 1;
-
-        /*if (level[positiontableau(posX)][positiontableau(posY+gravity)]==1){
-
+        if(level[positiontableau(posY+gravity+20)][positiontableau(posX)]!=1){
+            gravity = gravity + 1;
         }
         else{
+            gravity = 0;
+            while(level[positiontableau(posY+gravity+20)][positiontableau(posX)]!=1){
+                gravity = gravity + 1;
+            }
+        }
 
-        posY = posY +gravity;
-        gravity = gravity +1;
-        }*/
-        //posY = posY +gravity;
-        //gravity = gravity +1;
-
-
-        shape.setPosition(posX, posY);
+        shape.move(0,gravity);
+        posY = posY + gravity;
 
         window.clear();
         drawMap(map, window);
