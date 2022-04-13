@@ -98,7 +98,7 @@ int main()
 
         avancegravite = 1;
         std::cout << "debut"<< std::endl;
-        while(testdistance == 1){
+        while(testdistance == 1 && level[positiontableau(posY+avancegravite)][positiontableau(posX)]!=1){
 
             if(avancegravite<gravity){
 
@@ -119,10 +119,11 @@ int main()
                 testdistance = 0;
             }
 
-            usleep(500000);
+            usleep(50000);
         }
+
         std::cout << "finit0"<< std::endl;
-        //testdistance = 1;
+        testdistance = 1;
 
         /*if (level[positiontableau(posX)][positiontableau(posY+gravity)]==1){
 
