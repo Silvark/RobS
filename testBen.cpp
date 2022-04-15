@@ -4,11 +4,11 @@
 #include<unistd.h>
 #include <cmath>
 
-#define taillebloc 50
+#define taillebloc 20
 #define fenetrecaselargeur 31
 #define fenetrecasehauteur 8
 #define hauteurjoueur 20
-#define largeurjoueur 20
+#define largeurjoueur 5
 
 std::vector<sf::RectangleShape> tilesmaping(const std::vector<std::vector<int>> & level , std::array<sf::RectangleShape, 4> rects){
 
@@ -39,6 +39,21 @@ int positiontableau(float p){
     return x;
 }
 
+void explode(std::vector<std::vector<int>> & level,int posX,int posY,int radius){
+
+    for(int i = posX - radius; i <= posX + radius; i++)
+    {
+        for(int j = posY - radius; j <= posY + radius; j++)
+        {
+            if((i-posX)*(i-posX) + (j-posY)*(j-posY) <= radius*radius)
+            {
+               level[i][j]= 2;
+           }
+       }
+   }
+
+}
+
 int main()
 {
     //std::cout << "e";
@@ -56,7 +71,7 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(fenetrecaselargeur*taillebloc, taillebloc*fenetrecasehauteur), "First try");
 
-    sf::RectangleShape shape(sf::Vector2f(20,20));
+    sf::RectangleShape shape(sf::Vector2f(largeurjoueur,hauteurjoueur));
     shape.setFillColor(sf::Color::White);
     shape.setPosition(60, 60);
 
@@ -100,9 +115,15 @@ int main()
             while(level[positiontableau(posY+gravity+20)][positiontableau(posX)]!=1){
                 gravity = gravity + 1;
             }
+
         }
 
         shape.move(0,gravity);
+
+
+        explode(level,4,3,2);
+        map = tilesmaping(level, rects);
+
         posY = posY + gravity;
 
         window.clear();
