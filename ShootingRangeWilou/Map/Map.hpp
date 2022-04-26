@@ -20,11 +20,36 @@ class Map : public sf::Drawable { // permet d'avoir un objet customisé et pouva
     */
 
     size_t coordsToPix(int x, int y) const {return y * size.x + x;}
-    void updateColliders();  // update collide_map & normals en fonction de l'état de map
+    void updateMap();
+    void updateCollideMap();
+    void updateNormals();
+    bool checkSurfaceValidity(int x, int y);
+    sf::Vector2f computeNormal(int x, int y, int mask_size);
 
   public:
-    Terrain(std::string input_file); // constructeur
+    Map(std::string input_file); // constructeur
     sf::Vector2f getNormal(int x, int y) const;
+    sf::Vector2u getSize() const {return size;}
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+    // debug
+    void drawNormals(sf::RenderTarget& target) const {
+    	constexpr float LEN = 20;
+    	for (unsigned x = 0; x < size.x; x++) {
+    		for (unsigned y = 0; y < size.y; y++) {
+    			// Ensure this is a surface point
+
+    			if (collide_map[coordsToPix(x, y)]) {
+    				sf::Vertex line[2];
+    				line[0].position = sf::Vector2f(x, y);
+    				line[0].color = sf::Color::Blue;
+    				line[1].position = sf::Vector2f(x, y) + normals[coordsToPix(x, y)] * LEN;
+    				line[1].color = sf::Color::Blue;
+    				target.draw(line, 2, sf::Lines);
+    			}
+    		}
+    	}
+    }
 };
 
 #endif
