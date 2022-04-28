@@ -34,9 +34,9 @@ void Map::updateNormals() {
   for (int i = 0; i < int(size.x); i++) {
     for (int j = 0; j < int(size.y); j++) {
 
-      if (checkSurfaceValidity(i, j)) {
+      if (checkSurfaceValidity(i, j) && collide_map[coordsToPix(i, j)]) {
         normals[coordsToPix(i, j)] = computeNormal(i, j, MASK_SIZE);
-        map.setPixel(i, j, sf::Color::Red); // debug
+        map.setPixel(i, j, sf::Color(255, 0, 0, 128)); // debug
       }
 
     }
@@ -46,8 +46,7 @@ void Map::updateNormals() {
 
 bool Map::checkSurfaceValidity(int x, int y) {
   // un pixel possède une normale que s'il est solide
-  // et s'il est entouré de pixels solides ET non-solides
-  bool solidN = false;
+  // et s'il est voisin d'un pixel non solide
 	bool nonSolidN = false;
   bool indexValidity = false;
   bool mask_target = false;
@@ -60,16 +59,13 @@ bool Map::checkSurfaceValidity(int x, int y) {
       indexValidity = (i > 0 && j > 0 && i < int(size.x) && j < int(size.y));
       mask_target = mask[((j - y + 1) * 3) + (i - x + 1)];
       if (indexValidity && mask_target) {
-        if (collide_map[coordsToPix(i, j)]) {
-          solidN = true;
-        }
-        else {
+        if (!collide_map[coordsToPix(i, j)]) {
           nonSolidN = true;
         }
       }
     }
   }
-  return (solidN && nonSolidN);
+  return (nonSolidN);
 }
 
 sf::Vector2f Map::computeNormal(int x, int y, int mask_size) {
