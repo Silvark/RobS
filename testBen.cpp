@@ -112,6 +112,8 @@ int main()
     gravity.x = 25;
     gravity.y = 2;
 
+    Bombe* b1 = new Bombe(10,12);
+
     //sf::Vector2f position = shape.getPosition();
 
     while (window.isOpen())
@@ -150,23 +152,30 @@ int main()
 
 
 class Bombe {
-
 public:
 
-    sf::RectangleShape body(sf::Vector2f(5,5));
-    body.setFillColor(sf::Color::White);
-
+    Bombe(int x, int y);
     void explode(std::vector<std::vector<int>> & level,std::vector<sf::RectangleShape> & map,int posX,int posY);
     bool sortiemap(sf::Vector2f deplacement);
     void fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,std::vector<sf::RectangleShape> & map,std::array<sf::RectangleShape, 4> & rects);
 
-private:
+protected:
+    sf::RectangleShape body;
     int posX;
     int posY;
     int radius;
     sf::Vector2f gravity;
 
 };
+
+Bombe::Bombe(int x, int y){
+
+    sf::RectangleShape Bd(sf::Vector2f(10, 10));
+    this->posX = x;
+    this->posY = y;
+    this->radius = 5;
+    this->body = Bd ;
+}
 
 void Bombe::explode(std::vector<std::vector<int>> & level,std::vector<sf::RectangleShape> & map,int posX,int posY){
 
