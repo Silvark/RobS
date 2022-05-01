@@ -40,7 +40,93 @@ int positiontableau(float p){
     return x;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+class Bombe {
+public:
+
+    Bombe(int x, int y);
+    void explode(std::vector<std::vector<int>> & level,std::vector<sf::RectangleShape> & map,int posX,int posY);
+    bool sortiemap(sf::Vector2f deplacement);
+    void fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,std::vector<sf::RectangleShape> & map,std::array<sf::RectangleShape, 4> & rects);
+
+//protected:
+    sf::RectangleShape body;
+    int posX;
+    int posY;
+    int radius;
+    sf::Vector2f gravity;
+
+};
+
+Bombe::Bombe(int x, int y){
+
+    sf::RectangleShape Bd(sf::Vector2f(10, 10));
+    posX = x;
+    posY = y;
+    radius = 5;
+    body = Bd ;
+}
+
+void Bombe::explode(std::vector<std::vector<int>> & level,std::vector<sf::RectangleShape> & map,int posX,int posY){
+
+    for(int i = posX - this->radius; i <= posX + this->radius; i++)
+    {
+        for(int j = posY - radius; j <= posY + this->radius; j++)
+        {
+            if((i-posX)*(i-posX) + (j-posY)*(j-posY) < this->radius*this->radius)
+            {
+
+                if(i > 0 && i < fenetrecasehauteur && j < fenetrecaselargeur && j > 0){
+                    if(level[i][j] == 1){
+                        level[i][j]= 0;
+                    }
+                }
+           }
+       }
+   }
+}
+
+bool Bombe::sortiemap(sf::Vector2f deplacement){
+
+    if (this->posX + deplacement.x+largeurjoueur >= taillebloc*fenetrecaselargeur || this->posX + deplacement.x < 0 || this->posY + deplacement.y +hauteurjoueur >= taillebloc*fenetrecasehauteur ||this->posY + deplacement.y < 0){
+        return 0;
+    }
+    else{
+        return 1;
+    }
+}
+
+void Bombe::fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,std::vector<sf::RectangleShape> & map,std::array<sf::RectangleShape, 4> & rects){
+
+    if(sortiemap(gravity)){
+
+        if(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
+            gravity.y = gravity.y + 1;
+        }
+        else{
+            gravity.y = 0;
+            while(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
+                gravity.y = gravity.y + 1;
+            }
+            explode(level,map,positiontableau(this->posY+hauteurjoueur/2),positiontableau(this->posX+largeurjoueur/2));
+            std::cout << "BOOOM" << '\n';
+            map = tilesmaping(level, rects);
+            gravity.y = 2000;
+        }
+
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main()
 {
@@ -112,13 +198,16 @@ int main()
     gravity.x = 25;
     gravity.y = 2;
 
-    Bombe* b1 = new Bombe(10,12);
+    Bombe b1(10,2);
 
-    //sf::Vector2f position = shape.getPosition();
+    sf::Vector2f position = b1.body.getPosition();
 
     while (window.isOpen())
     {
-        //position = shape.getPosition();
+        position = b1.body.getPosition();
+        b1.posX = position.x;
+        b1.posY = position.y;
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -135,94 +224,15 @@ int main()
 
         }
 
-        //fctgravity(level,position,gravity,map,rects);
-        //shape.move(gravity);
+        b1.fctgravity(level,gravity,map,rects);
+        b1.body.move(gravity);
 
         window.clear();
         drawMap(map, window);
-        //window.draw(shape);
+        window.draw(b1.body);
         window.display();
         usleep(24000);
     }
 
     return 0;
-}
-
-
-
-
-class Bombe {
-public:
-
-    Bombe(int x, int y);
-    void explode(std::vector<std::vector<int>> & level,std::vector<sf::RectangleShape> & map,int posX,int posY);
-    bool sortiemap(sf::Vector2f deplacement);
-    void fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,std::vector<sf::RectangleShape> & map,std::array<sf::RectangleShape, 4> & rects);
-
-protected:
-    sf::RectangleShape body;
-    int posX;
-    int posY;
-    int radius;
-    sf::Vector2f gravity;
-
-};
-
-Bombe::Bombe(int x, int y){
-
-    sf::RectangleShape Bd(sf::Vector2f(10, 10));
-    this->posX = x;
-    this->posY = y;
-    this->radius = 5;
-    this->body = Bd ;
-}
-
-void Bombe::explode(std::vector<std::vector<int>> & level,std::vector<sf::RectangleShape> & map,int posX,int posY){
-
-    for(int i = posX - this->radius; i <= posX + this->radius; i++)
-    {
-        for(int j = posY - radius; j <= posY + this->radius; j++)
-        {
-            if((i-->posX)*(i-posX) + (j-posY)*(j-posY) < this->radius*this->radius)
-            {
-
-                if(i > 0 && i < fenetrecasehauteur && j < fenetrecaselargeur && j > 0){
-                    if(level[i][j] == 1){
-                        level[i][j]= 0;
-                    }
-                }
-           }
-       }
-   }
-}
-
-bool Bombe::sortiemap(sf::Vector2f deplacement){
-
-    if (this->posX + deplacement.x+largeurjoueur >= taillebloc*fenetrecaselargeur || this->posX + deplacement.x < 0 || this->posY + deplacement.y +hauteurjoueur >= taillebloc*fenetrecasehauteur ||this->posY + deplacement.y < 0){
-        return 0;
-    }
-    else{
-        return 1;
-    }
-}
-
-void Bombe::fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,std::vector<sf::RectangleShape> & map,std::array<sf::RectangleShape, 4> & rects){
-
-    if(sortiemap(gravity)){
-
-        if(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
-            gravity.y = gravity.y + 1;
-        }
-        else{
-            gravity.y = 0;
-            while(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
-                gravity.y = gravity.y + 1;
-            }
-            explode(level,map,positiontableau(this->posY+hauteurjoueur/2),positiontableau(this->posX+largeurjoueur/2));
-            std::cout << "BOOOM" << '\n';
-            map = tilesmaping(level, rects);
-            gravity.y = 2000;
-        }
-
-    }
 }
