@@ -3,6 +3,8 @@
 #include <vector>
 #include<unistd.h>
 #include <cmath>
+#include "bombe.hpp"
+#include "maping.hpp"
 
 //g++ testBen.cpp -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -11,122 +13,6 @@
 #define fenetrecasehauteur 40
 #define hauteurjoueur 10
 #define largeurjoueur 10
-
-std::vector<sf::RectangleShape> tilesmaping(const std::vector<std::vector<int>> & level , std::array<sf::RectangleShape, 4> rects){
-
-    std::vector<sf::RectangleShape> map;
-
-    for (int i = 0;i<fenetrecasehauteur;i++){
-        for (int j = 0;j<fenetrecaselargeur;j++){
-
-            rects[level[i][j]].setPosition(sf::Vector2f(j*taillebloc, i*taillebloc));
-
-            map.push_back(rects[level[i][j]]);
-        }
-
-    }
-
-    return map;
-}
-
-void drawMap(const std::vector<sf::RectangleShape>& map, sf::RenderWindow& window){
-
-    for(auto i : map)
-        window.draw(i);
-}
-
-int positiontableau(float p){
-    int x  = (int)std::floor(p/taillebloc);
-    return x;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-class Bombe {
-public:
-
-    Bombe(int x, int y);
-    void explode(std::vector<std::vector<int>> & level,std::vector<sf::RectangleShape> & map,int posX,int posY);
-    bool sortiemap(sf::Vector2f deplacement);
-    void fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,std::vector<sf::RectangleShape> & map,std::array<sf::RectangleShape, 4> & rects);
-
-//protected:
-    sf::RectangleShape body;
-    int posX;
-    int posY;
-    int radius;
-    sf::Vector2f gravity;
-
-};
-
-Bombe::Bombe(int x, int y){
-
-    sf::RectangleShape Bd(sf::Vector2f(10, 10));
-    posX = x;
-    posY = y;
-    radius = 5;
-    body = Bd ;
-}
-
-void Bombe::explode(std::vector<std::vector<int>> & level,std::vector<sf::RectangleShape> & map,int posX,int posY){
-
-    for(int i = posX - this->radius; i <= posX + this->radius; i++)
-    {
-        for(int j = posY - radius; j <= posY + this->radius; j++)
-        {
-            if((i-posX)*(i-posX) + (j-posY)*(j-posY) < this->radius*this->radius)
-            {
-
-                if(i > 0 && i < fenetrecasehauteur && j < fenetrecaselargeur && j > 0){
-                    if(level[i][j] == 1){
-                        level[i][j]= 0;
-                    }
-                }
-           }
-       }
-   }
-}
-
-bool Bombe::sortiemap(sf::Vector2f deplacement){
-
-    if (this->posX + deplacement.x+largeurjoueur >= taillebloc*fenetrecaselargeur || this->posX + deplacement.x < 0 || this->posY + deplacement.y +hauteurjoueur >= taillebloc*fenetrecasehauteur ||this->posY + deplacement.y < 0){
-        return 0;
-    }
-    else{
-        return 1;
-    }
-}
-
-void Bombe::fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,std::vector<sf::RectangleShape> & map,std::array<sf::RectangleShape, 4> & rects){
-
-    if(sortiemap(gravity)){
-
-        if(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
-            gravity.y = gravity.y + 1;
-        }
-        else{
-            gravity.y = 0;
-            while(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
-                gravity.y = gravity.y + 1;
-            }
-            explode(level,map,positiontableau(this->posY+hauteurjoueur/2),positiontableau(this->posX+largeurjoueur/2));
-            std::cout << "BOOOM" << '\n';
-            map = tilesmaping(level, rects);
-            gravity.y = 2000;
-        }
-
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main()
 {
@@ -177,9 +63,11 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(fenetrecaselargeur*taillebloc, taillebloc*fenetrecasehauteur), "Robs");
 
-    //sf::RectangleShape shape(sf::Vector2f(largeurjoueur,hauteurjoueur));
-    //shape.setFillColor(sf::Color::White);
-    //shape.setPosition(60, 2);
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+//////////////////////Type de Tuile Possible/////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
     sf::RectangleShape rouge(sf::Vector2f(taillebloc, taillebloc));
     rouge.setFillColor(sf::Color::Red);
@@ -190,23 +78,26 @@ int main()
     sf::RectangleShape jaune(sf::Vector2f(taillebloc, taillebloc));
     jaune.setFillColor(sf::Color::Yellow);
 
+/////////////////////////////////////////////////////////////////////
+
     std::array<sf::RectangleShape, 4> rects {rouge, vert, bleu, jaune};
-    std::vector<sf::RectangleShape> map = tilesmaping(level, rects);
+
+    Map map;
+    map.carte = map.tilesmaping(level, rects);
 
 
     sf::Vector2f gravity;
-    gravity.x = 25;
-    gravity.y = 2;
+    gravity.x = 20;
+    gravity.y = 10;
 
-    Bombe b1(10,2);
-
-    sf::Vector2f position = b1.body.getPosition();
+    Bombe b1(20,20);
+    //sf::Vector2f position;
 
     while (window.isOpen())
     {
-        position = b1.body.getPosition();
-        b1.posX = position.x;
-        b1.posY = position.y;
+        //position = b1.body.getPosition();
+        //b1.posX = position.x;
+        //b1.posY = position.y;
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -217,8 +108,7 @@ int main()
             if (event.type == sf::Event::KeyPressed){
                 if (event.key.code == sf::Keyboard::Z)
                 {
-                    //explode(level,map,25,15,15);
-                    map = tilesmaping(level, rects);
+                    map.carte = map.tilesmaping(level, rects);
                 }
             }
 
@@ -228,7 +118,7 @@ int main()
         b1.body.move(gravity);
 
         window.clear();
-        drawMap(map, window);
+        map.drawMap(window);
         window.draw(b1.body);
         window.display();
         usleep(24000);
