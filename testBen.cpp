@@ -3,8 +3,11 @@
 #include <vector>
 #include<unistd.h>
 #include <cmath>
+
+#include "weapon.hpp"
 #include "bombe.hpp"
 #include "maping.hpp"
+#include "desertEagle.hpp"
 
 //g++ testBen.cpp -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -90,14 +93,11 @@ int main()
     gravity.x = 20;
     gravity.y = 10;
 
-    Bombe b1(20,20);
-    //sf::Vector2f position;
+    Desert d1(20,20);
+    Bombe b1(200,10);
 
     while (window.isOpen())
     {
-        //position = b1.body.getPosition();
-        //b1.posX = position.x;
-        //b1.posY = position.y;
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -117,9 +117,15 @@ int main()
         b1.fctgravity(level,gravity,map,rects);
         b1.body.move(gravity);
 
+        d1.fctgravity(level,gravity,map,rects);
+        d1.body.move(gravity);
+
         window.clear();
         map.drawMap(window);
+
         window.draw(b1.body);
+        window.draw(d1.body);
+
         window.display();
         usleep(24000);
     }

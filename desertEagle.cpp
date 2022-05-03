@@ -1,4 +1,4 @@
-#include "bombe.hpp"
+#include "desertEagle.hpp"
 #include "maping.hpp"
 #include "fonctionUtiles.hpp"
 
@@ -13,19 +13,17 @@
 #define hauteurjoueur 10
 #define largeurjoueur 10
 
+Desert::Desert(int x, int y){
 
-Bombe::Bombe(int x, int y){
-
-    sf::RectangleShape Bd(sf::Vector2f(10, 10));
+    sf::RectangleShape Bd(sf::Vector2f(2, 4));
     posX = x;
     posY = y;
-    radius = 15;
+    radius = 3;
     body = Bd ;
     body.setPosition(x,y);
 }
 
-
-void Bombe::fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,Map & map,std::array<sf::RectangleShape, 4> & rects){
+void Desert::fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,Map & map,std::array<sf::RectangleShape, 4> & rects){
 
     sf::Vector2f position;
     position = this->body.getPosition();
@@ -35,12 +33,12 @@ void Bombe::fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & grav
     if(sortiemap(gravity)){
 
         if(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
-            gravity.y = gravity.y + 5;
+            gravity.y = gravity.y + 0.1;
         }
         else{
             gravity.y = 0;
             while(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
-                gravity.y = gravity.y + 1;
+                gravity.y = gravity.y + 0.1;
             }
             explode(level,positiontableau(this->posY+hauteurjoueur/2),positiontableau(this->posX+largeurjoueur/2));
             std::cout << "BOOOM" << '\n';
