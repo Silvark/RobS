@@ -1,4 +1,4 @@
-#include "bombe.hpp"
+#include "mine.hpp"
 #include "maping.hpp"
 #include "fonctionUtiles.hpp"
 
@@ -11,22 +11,20 @@
 #define fenetrecaselargeur 91
 #define fenetrecasehauteur 40
 
+Mine::Mine(int x, int y,sf::Vector2f traj){
 
-Bombe::Bombe(int x, int y,sf::Vector2f traj){
-
-    hauteurobjet = 10;
-    largeurobjet = 10;
+    hauteurobjet = 3;
+    largeurobjet = 8;
     sf::RectangleShape Bd(sf::Vector2f(largeurobjet, hauteurobjet));
     posX = x;
     posY = y;
+    radius = 5;
     trajectoire = traj;
-    radius = 10;
     body = Bd ;
     body.setPosition(x,y);
 }
 
-
-void Bombe::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
+void Mine::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
 
     sf::Vector2f position;
     position = this->body.getPosition();
@@ -38,18 +36,18 @@ void Bombe::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::arra
         sf::Vector2f traj = this->trajectoire;
 
         if(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
-            traj.y = traj.y + 1;
+            traj.y = traj.y + 5;
             this->trajectoire = traj;
         }
         else{
             traj.y = 0;
             while(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
-                traj.y = traj.y + 0.1;
+                traj.y = traj.y +0.1;
             }
-            explode(level,positiontableau(this->posY+this->hauteurobjet/2),positiontableau(this->posX+this->largeurobjet/2));
-            std::cout << "BOOOM" << '\n';
+            //explode(level,positiontableau(this->posY+this->hauteurobjet/2),positiontableau(this->posX+this->largeurobjet/2));
+            //std::cout << "BOOOM" << '\n';
             map.carte = map.tilesmaping(level, rects);
-            traj.y = 2000;
+            traj.x = 0;
             this->trajectoire = traj;
         }
 

@@ -10,8 +10,8 @@ LIBS=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lsfml-audio
 
 all: robs
 
-robs: testBen.o bombe.o maping.o desertEagle.o fonctionUtiles.o weapon.o
-	$(LD) $(LDFLAGS)  testBen.o maping.o bombe.o desertEagle.o fonctionUtiles.o weapon.o -o robs $(LIBS)
+robs: testBen.o bombe.o maping.o desertEagle.o fonctionUtiles.o weapon.o mine.o
+	$(LD) $(LDFLAGS)  testBen.o maping.o bombe.o desertEagle.o fonctionUtiles.o weapon.o mine.o -o robs $(LIBS)
 
 testBen.o: testBen.cpp bombe.hpp maping.hpp weapon.hpp
 	$(CPP) $(CPPFLAGS) -c testBen.cpp $(LIBS)
@@ -30,6 +30,9 @@ bombe.o: bombe.cpp bombe.hpp maping.hpp weapon.hpp
 
 desertEagle.o: desertEagle.cpp desertEagle.hpp maping.hpp weapon.hpp
 		$(CPP) $(CPPFLAGS) -c desertEagle.cpp $(LIBS)
+
+mine.o: mine.cpp mine.hpp maping.hpp weapon.hpp
+		$(CPP) $(CPPFLAGS) -c mine.cpp $(LIBS)
 
 
 clean:

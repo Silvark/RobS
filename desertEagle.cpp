@@ -10,40 +10,45 @@
 #define taillebloc 10
 #define fenetrecaselargeur 91
 #define fenetrecasehauteur 40
-#define hauteurjoueur 10
-#define largeurjoueur 10
 
-Desert::Desert(int x, int y){
+Desert::Desert(int x, int y,sf::Vector2f traj){
 
-    sf::RectangleShape Bd(sf::Vector2f(2, 4));
+    hauteurobjet = 4;
+    largeurobjet = 8;
+    sf::RectangleShape Bd(sf::Vector2f(largeurobjet, hauteurobjet));
     posX = x;
     posY = y;
     radius = 3;
+    trajectoire = traj;
     body = Bd ;
     body.setPosition(x,y);
 }
 
-void Desert::fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,Map & map,std::array<sf::RectangleShape, 4> & rects){
+void Desert::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
 
     sf::Vector2f position;
     position = this->body.getPosition();
     this->posX = position.x;
     this->posY = position.y;
 
-    if(sortiemap(gravity)){
+    if(sortiemap(this->trajectoire)){
 
-        if(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
-            gravity.y = gravity.y + 0.1;
+        sf::Vector2f traj = this->trajectoire;
+
+        if(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
+            traj.y = traj.y + 0.1;
+            this->trajectoire = traj;
         }
         else{
-            gravity.y = 0;
-            while(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
-                gravity.y = gravity.y + 0.1;
+            traj.y = 0;
+            while(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
+                traj.y = traj.y + 0.1;
             }
-            explode(level,positiontableau(this->posY+hauteurjoueur/2),positiontableau(this->posX+largeurjoueur/2));
+            explode(level,positiontableau(this->posY+this->hauteurobjet/2),positiontableau(this->posX+this->largeurobjet/2));
             std::cout << "BOOOM" << '\n';
             map.carte = map.tilesmaping(level, rects);
-            gravity.y = 2000;
+            traj.y = 2000;
+            this->trajectoire = traj;
         }
 
     }

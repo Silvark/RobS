@@ -1,5 +1,5 @@
-#ifndef DESERTEAGLE_HPP
-#define DESERTEAGLE_HPP
+#ifndef MINE_HPP
+#define MINE_HPP
 
 
 #include <SFML/Graphics.hpp>
@@ -7,11 +7,11 @@
 #include "maping.hpp"
 #include "weapon.hpp"
 
-class Desert : public Weapon {
+class Mine : public Weapon {
 
 public:
 
-    Desert(int x, int y,sf::Vector2f traj);
+    Mine(int x, int y,sf::Vector2f traj);
     void fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects);
 
 };

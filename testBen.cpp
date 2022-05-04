@@ -8,6 +8,7 @@
 #include "bombe.hpp"
 #include "maping.hpp"
 #include "desertEagle.hpp"
+#include "mine.hpp"
 
 //g++ testBen.cpp -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -89,12 +90,25 @@ int main()
     map.carte = map.tilesmaping(level, rects);
 
 
-    sf::Vector2f gravity;
-    gravity.x = 20;
-    gravity.y = 10;
+    sf::Vector2f traj1;
+    sf::Vector2f traj2;
 
-    Desert d1(20,20);
-    Bombe b1(200,10);
+    traj1.x = 0;
+    traj1.y = 0;
+
+    traj2.x = 25;
+    traj2.y = -1;
+
+
+    Bombe b1(200,10,traj1);
+    Desert d1(20,20,traj2);
+
+    Mine m1(400,10,traj2);
+
+
+    sf::RectangleShape line(sf::Vector2f(50, 50));
+    line.setFillColor(sf::Color::Cyan);
+    line.setPosition(700,250);
 
     while (window.isOpen())
     {
@@ -114,17 +128,23 @@ int main()
 
         }
 
-        b1.fctgravity(level,gravity,map,rects);
-        b1.body.move(gravity);
+        b1.fctgravity(level,map,rects);
+        b1.body.move(b1.trajectoire);
 
-        d1.fctgravity(level,gravity,map,rects);
-        d1.body.move(gravity);
+        d1.fctgravity(level,map,rects);
+        d1.body.move(d1.trajectoire);
+
+        m1.fctgravity(level,map,rects);
+        m1.body.move(m1.trajectoire);
 
         window.clear();
         map.drawMap(window);
 
         window.draw(b1.body);
         window.draw(d1.body);
+        window.draw(m1.body);
+
+        window.draw(line);
 
         window.display();
         usleep(24000);

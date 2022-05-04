@@ -10,8 +10,6 @@
 #define taillebloc 10
 #define fenetrecaselargeur 91
 #define fenetrecasehauteur 40
-#define hauteurjoueur 10
-#define largeurjoueur 10
 
 void Weapon::explode(std::vector<std::vector<int>> & level,int posX,int posY){
 
@@ -34,7 +32,7 @@ void Weapon::explode(std::vector<std::vector<int>> & level,int posX,int posY){
 
 bool Weapon::sortiemap(sf::Vector2f deplacement){
 
-    if (this->posX + deplacement.x+largeurjoueur >= taillebloc*fenetrecaselargeur || this->posX + deplacement.x < 0 || this->posY + deplacement.y +hauteurjoueur >= taillebloc*fenetrecasehauteur ||this->posY + deplacement.y < 0){
+    if (this->posX + deplacement.x+this->largeurobjet >= taillebloc*fenetrecaselargeur || this->posX + deplacement.x < 0 || this->posY + deplacement.y +this->hauteurobjet >= taillebloc*fenetrecasehauteur ||this->posY + deplacement.y < 0){
         return 0;
     }
     else{
@@ -42,27 +40,31 @@ bool Weapon::sortiemap(sf::Vector2f deplacement){
     }
 }
 
-void Weapon::fctgravity(std::vector<std::vector<int>> & level,sf::Vector2f & gravity,Map & map,std::array<sf::RectangleShape, 4> & rects){
+
+void Weapon::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
 
     sf::Vector2f position;
     position = this->body.getPosition();
     this->posX = position.x;
     this->posY = position.y;
 
-    if(sortiemap(gravity)){
+    if(sortiemap(this->trajectoire)){
 
-        if(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
-            gravity.y = gravity.y + 0.1;
+        sf::Vector2f traj = this->trajectoire;
+
+        if(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
+            traj.y = traj.y + 0.1;
         }
         else{
-            gravity.y = 0;
-            while(level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+gravity.y+hauteurjoueur)][positiontableau(this->posX+largeurjoueur)]!=1){
-                gravity.y = gravity.y + 1;
+            traj.y = 0;
+            while(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
+                traj.y = traj.y + 0.1;
             }
-            explode(level,positiontableau(this->posY+hauteurjoueur/2),positiontableau(this->posX+largeurjoueur/2));
+            explode(level,positiontableau(this->posY+this->hauteurobjet/2),positiontableau(this->posX+this->largeurobjet/2));
             std::cout << "BOOOM" << '\n';
             map.carte = map.tilesmaping(level, rects);
-            gravity.y = 2000;
+            traj.y = 2000;
+            this->trajectoire = traj;
         }
 
     }
