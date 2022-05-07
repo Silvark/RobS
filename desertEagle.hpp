@@ -11,7 +11,9 @@ class Desert : public Weapon {
 
 public:
 
-    Desert(int x, int y,sf::Vector2f traj);
+    Desert();
+    //void teste();
+    Desert(int &identification,int x, int y,sf::Vector2f traj);
     void fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects);
 
 };

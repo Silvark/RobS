@@ -12,7 +12,7 @@
 #define fenetrecasehauteur 40
 
 
-Bombe::Bombe(int x, int y,sf::Vector2f traj){
+Bombe::Bombe(int &idenification,int x, int y,sf::Vector2f traj){
 
     hauteurobjet = 10;
     largeurobjet = 10;
@@ -23,11 +23,15 @@ Bombe::Bombe(int x, int y,sf::Vector2f traj){
     radius = 10;
     body = Bd ;
     body.setPosition(x,y);
+    id = idenification;
+    idenification ++;
 }
 
+Bombe::~Bombe(){
+}
 
 void Bombe::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
-
+    std::cout << "/* message */" << '\n';
     sf::Vector2f position;
     position = this->body.getPosition();
     this->posX = position.x;
@@ -55,3 +59,7 @@ void Bombe::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::arra
 
     }
 }
+
+/*void Bombe::teste(){
+    std::cout << "bombe" << '\n';
+}*/

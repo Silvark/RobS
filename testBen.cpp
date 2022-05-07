@@ -3,6 +3,10 @@
 #include <vector>
 #include<unistd.h>
 #include <cmath>
+#include <list>
+//#include <unique_ptr>
+
+#include "fonctionUtiles.hpp"
 
 #include "weapon.hpp"
 #include "bombe.hpp"
@@ -17,6 +21,7 @@
 #define fenetrecasehauteur 40
 #define hauteurjoueur 10
 #define largeurjoueur 10
+
 
 int main()
 {
@@ -89,6 +94,7 @@ int main()
     Map map;
     map.carte = map.tilesmaping(level, rects);
 
+    int id_courrant = 0;
 
     sf::Vector2f traj1;
     sf::Vector2f traj2;
@@ -99,25 +105,33 @@ int main()
     traj2.x = 25;
     traj2.y = -1;
 
+    Bombe b1(id_courrant,200,10,traj1);
+    Desert d1(id_courrant,0,85,traj2);
+    Mine m1(id_courrant,35,85,traj2);
 
-    Bombe b1(200,10,traj1);
-    Desert d1(20,20,traj2);
+    std::vector<Weapon> weap;
 
-    Mine m1(400,10,traj2);
+    weap.push_back(b1);
+    weap.push_back(d1);
+    weap.push_back(m1);
 
-
-    sf::RectangleShape line(sf::Vector2f(50, 50));
-    line.setFillColor(sf::Color::Cyan);
-    line.setPosition(700,250);
 
     while (window.isOpen())
     {
-
         sf::Event event;
+
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type == sf::Event::MouseButtonPressed){
+                if (event.mouseButton.button == sf::Mouse::Left){
+
+                    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
+                    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+                }
+            }
 
             if (event.type == sf::Event::KeyPressed){
                 if (event.key.code == sf::Keyboard::Z)
@@ -128,23 +142,31 @@ int main()
 
         }
 
-        b1.fctgravity(level,map,rects);
+
+        /*b1.fctgravity(level,map,rects);
         b1.body.move(b1.trajectoire);
 
         d1.fctgravity(level,map,rects);
         d1.body.move(d1.trajectoire);
 
         m1.fctgravity(level,map,rects);
-        m1.body.move(m1.trajectoire);
+        m1.body.move(m1.trajectoire);*/
 
         window.clear();
         map.drawMap(window);
 
-        window.draw(b1.body);
-        window.draw(d1.body);
-        window.draw(m1.body);
+        for ( int i = 0; i< weap.size();i++){
 
-        window.draw(line);
+            //weap[i].teste();
+            weap[i].fctgravity(level,map,rects);
+            weap[i].body.move(weap[i].trajectoire);
+            window.draw(weap[i].body);
+        }
+
+        /*window.draw(b1.body);
+        window.draw(d1.body);
+        window.draw(m1.body);*/
+
 
         window.display();
         usleep(24000);

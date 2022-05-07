@@ -11,7 +11,12 @@ class Bombe : public Weapon {
 
 public:
 
-    Bombe(int x, int y,sf::Vector2f traj);
+    Bombe(int &identification,int x, int y,sf::Vector2f traj);
+
+    ~Bombe();
+
+    //void teste();
+
     void fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects);
 
 };

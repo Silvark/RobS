@@ -11,7 +11,11 @@
 #define fenetrecaselargeur 91
 #define fenetrecasehauteur 40
 
-Desert::Desert(int x, int y,sf::Vector2f traj){
+
+Desert::Desert(){
+}
+
+Desert::Desert(int &idenification,int x, int y,sf::Vector2f traj){
 
     hauteurobjet = 4;
     largeurobjet = 8;
@@ -22,10 +26,13 @@ Desert::Desert(int x, int y,sf::Vector2f traj){
     trajectoire = traj;
     body = Bd ;
     body.setPosition(x,y);
+    id = idenification;
+    idenification ++;
 }
 
 void Desert::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
 
+    std::cout << "/* mes */" << '\n';
     sf::Vector2f position;
     position = this->body.getPosition();
     this->posX = position.x;
@@ -53,3 +60,7 @@ void Desert::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::arr
 
     }
 }
+
+/*void Desert::teste(){
+    std::cout << "desert" << '\n';
+}*/

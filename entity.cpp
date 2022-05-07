@@ -1,4 +1,4 @@
-#include "mine.hpp"
+#include "entity.hpp"
 #include "maping.hpp"
 #include "fonctionUtiles.hpp"
 
@@ -6,30 +6,25 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <list>
 
 #define taillebloc 10
 #define fenetrecaselargeur 91
 #define fenetrecasehauteur 40
 
-Mine::Mine(int &idenification,int x, int y,sf::Vector2f traj){
 
-    hauteurobjet = 3;
-    largeurobjet = 8;
-    sf::RectangleShape Bd(sf::Vector2f(largeurobjet, hauteurobjet));
-    posX = x;
-    posY = y;
-    radius = 5;
-    trajectoire = traj;
-    body = Bd ;
-    body.setPosition(x,y);
-    id = idenification;
-    idenification ++;
+bool Entity::sortiemap(sf::Vector2f deplacement){
+
+    if (this->posX + deplacement.x+this->largeurobjet >= taillebloc*fenetrecaselargeur || this->posX + deplacement.x < 0 || this->posY + deplacement.y +this->hauteurobjet >= taillebloc*fenetrecasehauteur ||this->posY + deplacement.y < 0){
+        return 0;
+    }
+    else{
+        return 1;
+    }
 }
 
-Mine::~Mine(){
-}
 
-void Mine::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
+void Entity::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
 
     sf::Vector2f position;
     position = this->body.getPosition();
@@ -41,13 +36,12 @@ void Mine::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array
         sf::Vector2f traj = this->trajectoire;
 
         if(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
-            traj.y = traj.y + 5;
-            this->trajectoire = traj;
+            traj.y = traj.y + 0.1;
         }
         else{
             traj.y = 0;
             while(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
-                traj.y = traj.y +0.1;
+                traj.y = traj.y + 0.1;
             }
             traj.x = 0;
             this->trajectoire = traj;
@@ -56,6 +50,6 @@ void Mine::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array
     }
 }
 
-/*void Mine::teste(){
-    std::cout << "mine" << '\n';
+/*void Entity::teste(){
+    std::cout << "mess"<< '\n';
 }*/
