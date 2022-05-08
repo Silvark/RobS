@@ -55,8 +55,8 @@ void Bombe::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::arra
             map.carte = map.tilesmaping(level, rects);
             traj.y = 2000;
             this->trajectoire = traj;
-        }
 
+        }
     }
 }
 
