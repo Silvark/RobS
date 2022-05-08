@@ -109,11 +109,11 @@ int main()
     Desert d1(id_courrant,0,85,traj2);
     Mine m1(id_courrant,35,85,traj2);
 
-    std::vector<Weapon> weap;
+    std::vector<Weapon *> weap;
 
-    weap.push_back(b1);
-    weap.push_back(d1);
-    weap.push_back(m1);
+    weap.push_back(&b1);
+    weap.push_back(&d1);
+    weap.push_back(&m1);
 
 
     while (window.isOpen())
@@ -158,9 +158,10 @@ int main()
         for ( int i = 0; i< weap.size();i++){
 
             //weap[i].teste();
-            weap[i].fctgravity(level,map,rects);
-            weap[i].body.move(weap[i].trajectoire);
-            window.draw(weap[i].body);
+            (weap[i])->fctgravity(level,map,rects);
+            std::cout << i << " traj : (" << (weap[i])->trajectoire.x << ", " << (weap[i])->trajectoire.y << ")" << std::endl;
+            (weap[i])->body.move((weap[i])->trajectoire);
+            window.draw((weap[i])->body);
         }
 
         /*window.draw(b1.body);
