@@ -12,11 +12,8 @@ class Entity{
 public:
 
     bool sortiemap(sf::Vector2f deplacement);
-    void fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects);
+    virtual void fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects)= 0;
 
-    //void teste();
-
-    //void deplaceentity(std::list<Entity> entity,std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects);
 
 
     sf::RectangleShape body;

@@ -12,7 +12,7 @@ class Weapon : public Entity{
 public:
     virtual void fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects) =0;
     void explode(std::vector<std::vector<int>> & level,int posX,int posY);
-    //void teste();
+
     int radius;
 };
 

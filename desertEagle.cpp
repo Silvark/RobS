@@ -32,7 +32,6 @@ Desert::Desert(int &idenification,int x, int y,sf::Vector2f traj){
 
 void Desert::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
 
-    std::cout << "/* mes */" << '\n';
     sf::Vector2f position;
     position = this->body.getPosition();
     this->posX = position.x;
@@ -60,7 +59,3 @@ void Desert::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::arr
 
     }
 }
-
-/*void Desert::teste(){
-    std::cout << "desert" << '\n';
-}*/

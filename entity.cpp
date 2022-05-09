@@ -49,7 +49,3 @@ void Entity::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::arr
 
     }
 }
-
-/*void Entity::teste(){
-    std::cout << "mess"<< '\n';
-}*/

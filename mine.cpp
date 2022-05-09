@@ -55,7 +55,3 @@ void Mine::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array
 
     }
 }
-
-/*void Mine::teste(){
-    std::cout << "mine" << '\n';
-}*/

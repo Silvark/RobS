@@ -31,7 +31,7 @@ Bombe::~Bombe(){
 }
 
 void Bombe::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
-    std::cout << "/* message */" << '\n';
+
     sf::Vector2f position;
     position = this->body.getPosition();
     this->posX = position.x;
@@ -59,7 +59,3 @@ void Bombe::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::arra
         }
     }
 }
-
-/*void Bombe::teste(){
-    std::cout << "bombe" << '\n';
-}*/

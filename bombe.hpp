@@ -15,8 +15,6 @@ public:
 
     ~Bombe();
 
-    //void teste();
-
     void fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects);
 
 };

@@ -4,7 +4,6 @@
 #include<unistd.h>
 #include <cmath>
 #include <list>
-//#include <unique_ptr>
 
 #include "fonctionUtiles.hpp"
 
@@ -99,6 +98,11 @@ int main()
     sf::Vector2f traj1;
     sf::Vector2f traj2;
 
+    sf::Vector2f trajectory;
+    bool target =0;
+    sf::Vector2f targetPoint;
+
+
     traj1.x = 0;
     traj1.y = 0;
 
@@ -128,8 +132,18 @@ int main()
             if (event.type == sf::Event::MouseButtonPressed){
                 if (event.mouseButton.button == sf::Mouse::Left){
 
-                    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-                    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+
+                    if(target == 1){
+                        //std::cout << "tire" << '\n';
+                        target = 0;
+                    }
+                }
+                if (event.mouseButton.button == sf::Mouse::Right){
+
+                    //std::cout << "pos" << event.mouseButton.x << std::endl;
+                    targetPoint.x = event.mouseButton.x;
+                    targetPoint.y = event.mouseButton.y;
+                    target = 1;
                 }
             }
 
@@ -142,32 +156,14 @@ int main()
 
         }
 
-
-        /*b1.fctgravity(level,map,rects);
-        b1.body.move(b1.trajectoire);
-
-        d1.fctgravity(level,map,rects);
-        d1.body.move(d1.trajectoire);
-
-        m1.fctgravity(level,map,rects);
-        m1.body.move(m1.trajectoire);*/
-
         window.clear();
         map.drawMap(window);
 
         for ( int i = 0; i< weap.size();i++){
-
-            //weap[i].teste();
             (weap[i])->fctgravity(level,map,rects);
-            std::cout << i << " traj : (" << (weap[i])->trajectoire.x << ", " << (weap[i])->trajectoire.y << ")" << std::endl;
             (weap[i])->body.move((weap[i])->trajectoire);
             window.draw((weap[i])->body);
         }
-
-        /*window.draw(b1.body);
-        window.draw(d1.body);
-        window.draw(m1.body);*/
-
 
         window.display();
         usleep(24000);
