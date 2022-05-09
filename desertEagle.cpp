@@ -1,5 +1,5 @@
 #include "desertEagle.hpp"
-#include "maping.hpp"
+#include "Map.hpp"
 #include "fonctionUtiles.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -30,7 +30,7 @@ Desert::Desert(int &idenification,int x, int y,sf::Vector2f traj){
     idenification ++;
 }
 
-void Desert::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
+void Desert::fctgravity(Map& level){
 
     sf::Vector2f position;
     position = this->body.getPosition();
@@ -41,18 +41,17 @@ void Desert::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::arr
 
         sf::Vector2f traj = this->trajectoire;
 
-        if(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
+        if(level.getPixel(posX, posY + hauteurobjet) == false && level.getPixel(posX + largeurobjet, posY + hauteurobjet) == false){
             traj.y = traj.y + 0.1;
             this->trajectoire = traj;
         }
         else{
             traj.y = 0;
-            while(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
+            while(level.getPixel(posX, posY + hauteurobjet) == false && level.getPixel(posX + largeurobjet, posY + hauteurobjet) == false){
                 traj.y = traj.y + 0.1;
             }
-            explode(level,positiontableau(this->posY+this->hauteurobjet/2),positiontableau(this->posX+this->largeurobjet/2));
+            explode(level, posX + traj.x + largeurobjet/2, posY + traj.y + hauteurobjet/2);
             std::cout << "BOOOM" << '\n';
-            map.carte = map.tilesmaping(level, rects);
             traj.y = 2000;
             this->trajectoire = traj;
         }

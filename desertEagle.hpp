@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "maping.hpp"
+#include "Map.hpp"
 #include "weapon.hpp"
 
 class Desert : public Weapon {
@@ -12,9 +12,9 @@ class Desert : public Weapon {
 public:
 
     Desert();
-    
+
     Desert(int &identification,int x, int y,sf::Vector2f traj);
-    void fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects);
+    void fctgravity(Map& map);
 
 };
 

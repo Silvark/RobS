@@ -1,5 +1,5 @@
 #include "weapon.hpp"
-#include "maping.hpp"
+#include "Map.hpp"
 #include "fonctionUtiles.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -7,12 +7,8 @@
 #include <iostream>
 #include <vector>
 
-#define taillebloc 10
-#define fenetrecaselargeur 91
-#define fenetrecasehauteur 40
-
-void Weapon::explode(std::vector<std::vector<int>> & level,int posX,int posY){
-
+void Weapon::explode(Map& map,int posX,int posY){
+    int minX = posX, minY = posY;
     for(int i = posX - this->radius; i <= posX + this->radius; i++)
     {
         for(int j = posY - radius; j <= posY + this->radius; j++)
@@ -20,12 +16,15 @@ void Weapon::explode(std::vector<std::vector<int>> & level,int posX,int posY){
             if((i-posX)*(i-posX) + (j-posY)*(j-posY) < this->radius*this->radius)
             {
 
-                if(i > 0 && i < fenetrecasehauteur && j < fenetrecaselargeur && j > 0){
-                    if(level[i][j] == 1){
-                        level[i][j]= 0;
+                if(i > 0 && i < map.getSize().x && j < map.getSize().y && j > 0){
+                    if(map.getPixel(i, j) == 1){
+                        map.setPixel(i, j, 0);
                     }
+                    if (i < minX) {minX = i;}
+                    if (j < minY) {minY = j;}
                 }
            }
        }
    }
+   map.updateMap(minX, minY, (this->radius*2), (this->radius)*2);
 }

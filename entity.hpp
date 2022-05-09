@@ -5,14 +5,14 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <list>
-#include "maping.hpp"
+#include "Map.hpp"
 
 class Entity{
 
 public:
 
     bool sortiemap(sf::Vector2f deplacement);
-    virtual void fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects)= 0;
+    virtual void fctgravity(Map& map)= 0;
 
 
 

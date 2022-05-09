@@ -1,42 +1,15 @@
-CPP=g++
-LD=g++
+CC = g++
+CFLAGS = -Wall
+LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
+all: main
 
+main: main.o Map.o entity.o weapon.o mine.o desertEagle.o bombe.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-CPPFLAGS=-std=c++14
-LDFLAGS=-std=c++14
-LIBS=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lsfml-audio
+%.o: %.cpp Map.hpp entity.hpp weapon.hpp mine.hpp desertEagle.hpp bombe.hpp
+	$(CC) $(CFLAGS) $< -c
 
-
-all: robs
-
-robs: testBen.o bombe.o maping.o entity.o desertEagle.o fonctionUtiles.o weapon.o mine.o
-	$(LD) $(LDFLAGS)  testBen.o maping.o entity.o bombe.o desertEagle.o fonctionUtiles.o weapon.o mine.o -o robs $(LIBS)
-
-testBen.o: testBen.cpp bombe.hpp maping.hpp weapon.hpp fonctionUtiles.hpp
-	$(CPP) $(CPPFLAGS) -c testBen.cpp $(LIBS)
-
-weapon.o: weapon.cpp weapon.hpp entity.hpp
-	$(CPP) $(CPPFLAGS) -c weapon.cpp $(LIBS)
-
-fonctionUtiles.o: fonctionUtiles.cpp fonctionUtiles.hpp
-	$(CPP) $(CPPFLAGS) -c fonctionUtiles.cpp $(LIBS)
-
-maping.o: maping.cpp maping.hpp
-	$(CPP) $(CPPFLAGS) -c maping.cpp $(LIBS)
-
-bombe.o: bombe.cpp bombe.hpp maping.hpp weapon.hpp
-	$(CPP) $(CPPFLAGS) -c bombe.cpp $(LIBS)
-
-desertEagle.o: desertEagle.cpp desertEagle.hpp maping.hpp weapon.hpp
-		$(CPP) $(CPPFLAGS) -c desertEagle.cpp $(LIBS)
-
-mine.o: mine.cpp mine.hpp maping.hpp weapon.hpp
-		$(CPP) $(CPPFLAGS) -c mine.cpp $(LIBS)
-
-entity.o: entity.cpp entity.hpp maping.hpp
-		$(CPP) $(CPPFLAGS) -c entity.cpp $(LIBS)
-
-
+.PHONY: clean
 clean:
-	rm -f *.o robs
+	rm -f *.o main

@@ -4,14 +4,14 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "maping.hpp"
+#include "Map.hpp"
 #include "entity.hpp"
 
 class Weapon : public Entity{
-
+protected:
 public:
-    virtual void fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects) =0;
-    void explode(std::vector<std::vector<int>> & level,int posX,int posY);
+    virtual void fctgravity(Map& map) =0;
+    void explode(Map& map ,int posX,int posY);
 
     int radius;
 };

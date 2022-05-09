@@ -1,5 +1,5 @@
 #include "mine.hpp"
-#include "maping.hpp"
+#include "Map.hpp"
 #include "fonctionUtiles.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -29,29 +29,31 @@ Mine::Mine(int &idenification,int x, int y,sf::Vector2f traj){
 Mine::~Mine(){
 }
 
-void Mine::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
+void Mine::fctgravity(Map& level){
 
-    sf::Vector2f position;
-    position = this->body.getPosition();
-    this->posX = position.x;
-    this->posY = position.y;
+      sf::Vector2f position;
+      position = this->body.getPosition();
+      this->posX = position.x;
+      this->posY = position.y;
 
-    if(sortiemap(this->trajectoire)){
+      if(sortiemap(this->trajectoire)){
 
-        sf::Vector2f traj = this->trajectoire;
+          sf::Vector2f traj = this->trajectoire;
 
-        if(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
-            traj.y = traj.y + 5;
-            this->trajectoire = traj;
-        }
-        else{
-            traj.y = 0;
-            while(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
-                traj.y = traj.y +0.1;
-            }
-            traj.x = 0;
-            this->trajectoire = traj;
-        }
+          if(level.getPixel(posX, posY + hauteurobjet) == false && level.getPixel(posX + largeurobjet, posY + hauteurobjet) == false){
+              traj.y = traj.y + 5;
+              this->trajectoire = traj;
+          }
+          else{
+              traj.y = 0;
+              while(level.getPixel(posX, posY + hauteurobjet) == false && level.getPixel(posX + largeurobjet, posY + hauteurobjet) == false){
+                  traj.y = traj.y + 0.1;
+              }
+              explode(level, posX + traj.x + largeurobjet/2, posY + traj.y + hauteurobjet/2);
+              std::cout << "BOOOM" << '\n';
+              traj.y = 2000;
+              this->trajectoire = traj;
+          }
 
-    }
-}
+      }
+  }

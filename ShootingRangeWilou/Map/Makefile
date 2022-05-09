@@ -4,10 +4,10 @@ LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 all: main
 
-main: main.o Map.o
+main: main.o Map.o Entity.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-%.o: %.cpp Map.hpp
+%.o: %.cpp Map.hpp Entity.hpp
 	$(CC) $(CFLAGS) $< -c
 
 .PHONY: clean

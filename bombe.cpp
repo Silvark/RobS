@@ -1,5 +1,5 @@
 #include "bombe.hpp"
-#include "maping.hpp"
+#include "Map.hpp"
 #include "fonctionUtiles.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -27,35 +27,31 @@ Bombe::Bombe(int &idenification,int x, int y,sf::Vector2f traj){
     idenification ++;
 }
 
-Bombe::~Bombe(){
-}
+void Bombe::fctgravity(Map& level){
 
-void Bombe::fctgravity(std::vector<std::vector<int>> & level,Map & map,std::array<sf::RectangleShape, 4> & rects){
+      sf::Vector2f position;
+      position = this->body.getPosition();
+      this->posX = position.x;
+      this->posY = position.y;
 
-    sf::Vector2f position;
-    position = this->body.getPosition();
-    this->posX = position.x;
-    this->posY = position.y;
+      if(sortiemap(this->trajectoire)){
 
-    if(sortiemap(this->trajectoire)){
+          sf::Vector2f traj = this->trajectoire;
 
-        sf::Vector2f traj = this->trajectoire;
+          if(level.getPixel(posX, posY + hauteurobjet) == false && level.getPixel(posX + largeurobjet, posY + hauteurobjet) == false){
+              traj.y = traj.y + 1;
+              this->trajectoire = traj;
+          }
+          else{
+              traj.y = 0;
+              while(level.getPixel(posX, posY + hauteurobjet) == false && level.getPixel(posX + largeurobjet, posY + hauteurobjet) == false){
+                  traj.y = traj.y + 0.1;
+              }
+              explode(level, posX + traj.x + largeurobjet/2, posY + traj.y + hauteurobjet/2);
+              std::cout << "BOOOM" << '\n';
+              traj.y = 2000;
+              this->trajectoire = traj;
+          }
 
-        if(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
-            traj.y = traj.y + 1;
-            this->trajectoire = traj;
-        }
-        else{
-            traj.y = 0;
-            while(level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX)]!=1 && level[positiontableau(this->posY+traj.y+this->hauteurobjet)][positiontableau(this->posX+this->largeurobjet)]!=1){
-                traj.y = traj.y + 0.1;
-            }
-            explode(level,positiontableau(this->posY+this->hauteurobjet/2),positiontableau(this->posX+this->largeurobjet/2));
-            std::cout << "BOOOM" << '\n';
-            map.carte = map.tilesmaping(level, rects);
-            traj.y = 2000;
-            this->trajectoire = traj;
-
-        }
-    }
-}
+      }
+  }
