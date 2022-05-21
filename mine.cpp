@@ -37,21 +37,18 @@ void Mine::fctgravity(Map& level){
       this->posY = position.y;
 
       if(sortiemap(this->trajectoire)){
-
           sf::Vector2f traj = this->trajectoire;
 
-          if(level.getPixel(posX, posY + hauteurobjet) == false && level.getPixel(posX + largeurobjet, posY + hauteurobjet) == false){
-              traj.y = traj.y + 5;
+          if(level.getPixel(position.x+traj.x, position.y + this->hauteurobjet+traj.y) == false && level.getPixel(position.x + this->largeurobjet+traj.x, position.y + this->hauteurobjet+traj.y) == false){
+              traj.y = traj.y + 1;
               this->trajectoire = traj;
           }
           else{
               traj.y = 0;
-              while(level.getPixel(posX, posY + hauteurobjet) == false && level.getPixel(posX + largeurobjet, posY + hauteurobjet) == false){
+              while(level.getPixel(position.x+traj.x, position.y + this->hauteurobjet+traj.y) == false && level.getPixel(position.x + this->largeurobjet+traj.x, position.y + this->hauteurobjet+traj.y) == false){
                   traj.y = traj.y + 0.1;
               }
-              explode(level, posX + traj.x + largeurobjet/2, posY + traj.y + hauteurobjet/2);
-              std::cout << "BOOOM" << '\n';
-              traj.y = 2000;
+              traj.x = 0;
               this->trajectoire = traj;
           }
 

@@ -20,7 +20,7 @@ Bombe::Bombe(int &idenification,int x, int y,sf::Vector2f traj){
     posX = x;
     posY = y;
     trajectoire = traj;
-    radius = 10;
+    radius = 50;
     body = Bd ;
     body.setPosition(x,y);
     id = idenification;
@@ -35,19 +35,18 @@ void Bombe::fctgravity(Map& level){
       this->posY = position.y;
 
       if(sortiemap(this->trajectoire)){
-
           sf::Vector2f traj = this->trajectoire;
 
-          if(level.getPixel(posX, posY + hauteurobjet) == false && level.getPixel(posX + largeurobjet, posY + hauteurobjet) == false){
+          if(level.getPixel(position.x+traj.x, position.y + this->hauteurobjet+traj.y) == false && level.getPixel(position.x + this->largeurobjet+traj.x, position.y + this->hauteurobjet+traj.y) == false){
               traj.y = traj.y + 1;
               this->trajectoire = traj;
           }
           else{
               traj.y = 0;
-              while(level.getPixel(posX, posY + hauteurobjet) == false && level.getPixel(posX + largeurobjet, posY + hauteurobjet) == false){
+              while(level.getPixel(position.x+traj.x, position.y + this->hauteurobjet+traj.y) == false && level.getPixel(position.x + this->largeurobjet+traj.x, position.y + this->hauteurobjet+traj.y) == false){
                   traj.y = traj.y + 0.1;
               }
-              explode(level, posX + traj.x + largeurobjet/2, posY + traj.y + hauteurobjet/2);
+              explode(level, position.x + traj.x + this->largeurobjet/2, position.y + traj.y + this->hauteurobjet/2);
               std::cout << "BOOOM" << '\n';
               traj.y = 2000;
               this->trajectoire = traj;

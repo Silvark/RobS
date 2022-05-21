@@ -4,10 +4,10 @@ LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 all: main
 
-main: main.o Map.o entity.o weapon.o mine.o desertEagle.o bombe.o
+main: main.o Map.o entity.o weapon.o mine.o desertEagle.o bombe.o joueur.o fonctionUtiles.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-%.o: %.cpp Map.hpp entity.hpp weapon.hpp mine.hpp desertEagle.hpp bombe.hpp
+%.o: %.cpp Map.hpp entity.hpp weapon.hpp mine.hpp desertEagle.hpp bombe.hpp joueur.hpp fonctionUtiles.hpp
 	$(CC) $(CFLAGS) $< -c
 
 .PHONY: clean
