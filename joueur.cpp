@@ -45,10 +45,11 @@ void Joueur::fctgravity(Map& level){
 
         if(level.getPixel(position.x+traj.x, position.y + this->hauteurobjet+traj.y) == false && level.getPixel(position.x + this->largeurobjet+traj.x, position.y + this->hauteurobjet+traj.y) == false){
             //std::cout << "chute" << '\n';
-            traj.y = traj.y + 1;
+            if(level.getPixel(position.x+traj.x, position.y + this->hauteurobjet+1) == false && level.getPixel(position.x + this->largeurobjet+traj.x, position.y + this->hauteurobjet+traj.y+1) == false){
+                traj.y = traj.y + 1;
+            }
             this->trajectoire = traj;
         }
-
         else {
             //std::cout << "chutelente" << '\n';
             traj.y = 0;
