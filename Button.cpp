@@ -1,7 +1,7 @@
 #include "Button.hpp"
 
 Button::Button(sf::Vector2f pos, sf::Vector2f sz,
-               std::string txt, sf::Font& font)
+               std::string txt, sf::Font& font, Command* act)
 {
   // button element
   position = pos;
@@ -9,6 +9,7 @@ Button::Button(sf::Vector2f pos, sf::Vector2f sz,
   element.setPosition(pos);
   element.setOutlineThickness(5);
   setColors(sf::Color(54, 145, 209, 255), sf::Color(13, 76, 120, 255));
+  action = act;
 
   // text
   desc = sf::Text();
@@ -25,10 +26,10 @@ Button::Button(sf::Vector2f pos, sf::Vector2f sz,
 
 Button::Button(sf::Vector2f pos, sf::Vector2f sz, std::string txt,
        sf::Font& font, sf::Vector2f hbPos, sf::Vector2f hbSize,
-       sf::Color btnCol, sf::Color outlineCol)
+       sf::Color btnCol, sf::Color outlineCol, Command* act)
 {
   // button element
-  Button(pos, sz, txt, font);
+  Button(pos, sz, txt, font, act);
 
   // custom hitbox & colors
   setHitbox(hbPos, hbSize);
@@ -58,8 +59,9 @@ void Button::hoveredStatus(const sf::Vector2i& mousePos) {
 }
 
 void Button::onClick() {
-  if (hovered)
-    std::cout << "clicked!" << std::endl;
+  if (hovered) {
+    action->execute();
+  }
 }
 
 void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
