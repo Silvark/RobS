@@ -43,6 +43,11 @@ void Desert::fctgravity(Map& level){
         if(level.getPixel(position.x+traj.x, position.y + this->hauteurobjet+traj.y) == false && level.getPixel(position.x + this->largeurobjet+traj.x, position.y + this->hauteurobjet+traj.y) == false){
             traj.y = traj.y + 0.1;
             this->trajectoire = traj;
+
+
+            rotationProjectile(*this);
+
+            //this->body.rotate(tan(traj.x/traj.y));
         }
         else{
             traj.y = 0;
@@ -53,6 +58,8 @@ void Desert::fctgravity(Map& level){
             std::cout << "BOOOM" << '\n';
             traj.y = 2000;
             this->trajectoire = traj;
+            //this->body.setRotation(tan(traj.x/traj.y));
+            rotationProjectile(*this);
         }
 
     }

@@ -28,35 +28,28 @@
 int main()
 {
 
-    Map level("test.png");
+    Map level("test2.png");
     sf::RenderWindow window(sf::VideoMode(level.getSize().x, level.getSize().y), "RobS");
 
     int id_courrant = 0;
 
-
     sf::Vector2f traj1;
-    sf::Vector2f traj2;
 
     sf::Vector2f trajectory;
     bool target =0;
     sf::Vector2f targetPoint;
 
     int sizeEntity;
-    bool isPressed;
-
 
     traj1.x = 0;
     traj1.y = 0;
 
-    traj2.x = 25;
-    traj2.y = -1;
-
-    Bombe b1(id_courrant,200,10,traj1);
-    Desert d1(id_courrant,0,85,traj2);
-    Mine m1(id_courrant,35,85,traj2);
+    Bombe b1(id_courrant,-10,0,traj1);
+    Desert d1(id_courrant,-10,0,traj1);
+    Mine m1(id_courrant,-10,0,traj1);
 
     Joueur j1(id_courrant,750,150);
-    Joueur j2(id_courrant,150,150);
+    Joueur j2(id_courrant,300,150);
 
     std::vector<Entity *> entitee;
     entitee.push_back(&b1);
@@ -65,13 +58,26 @@ int main()
     entitee.push_back(&j1);
     entitee.push_back(&j2);
 
+    int weapon_courrante;
+    std::vector<Weapon *> weapon_list;
+    weapon_list.push_back(&b1);
+    weapon_list.push_back(&d1);
+    weapon_list.push_back(&m1);
+
     int player = 0;
     std::vector<Joueur*> player_list;
     player_list.push_back(&j1);
     player_list.push_back(&j2);
 
-std::cout << "taille liste" << '\n';
-std::cout << player_list.size() << '\n';
+    sf::Vector2f position_target;
+    position_target.x = 0;
+    position_target.y = 0;
+
+    sf::RectangleShape body_target(sf::Vector2f(4, 4));
+    body_target.setFillColor((sf::Color::Red));
+
+    //std::cout << "taille liste" << '\n';
+    //std::cout << player_list.size() << '\n';
 
     while (window.isOpen())
     {
@@ -85,20 +91,19 @@ std::cout << player_list.size() << '\n';
             if (event.type == sf::Event::MouseButtonPressed){
                 if (event.mouseButton.button == sf::Mouse::Right){
 
-                    std::cout << "visee" << "\n";
                     targetPoint.x = event.mouseButton.x;
                     targetPoint.y = event.mouseButton.y;
-                    trajectory = vecteurDirecteur(targetPoint,10, 150);
+                    trajectory = vecteurDirecteur(targetPoint,player_list[player]->posX, player_list[player]->posY);
                     target = 1;
+                    body_target.setPosition(targetPoint.x-2,targetPoint.y-2);
+
                 }
 
                 if (event.mouseButton.button == sf::Mouse::Left){
 
-
                     if(target == 1){
-                        //b2.trajectoire = trajectory;
-                        //entitee.push_back(&b2);
-                        std::cout << "tireeee" << '\n';
+                        weapon_list[weapon_courrante]->trajectoire = trajectory;
+                        weapon_list[weapon_courrante]->body.setPosition(player_list[player]->posX+player_list[player]->largeurobjet/2, player_list[player]->posY+player_list[player]->hauteurobjet/2);
                         target = 0;
                     }
                 }
@@ -116,19 +121,20 @@ std::cout << player_list.size() << '\n';
                 {
                     player_list[player]->deplacement(2);
                 }
-
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
                 {
-                    if (isPressed == false){
-
-                        isPressed = true;
-                        player = player+1;
-                        if(player>player_list.size()-1){
-                            player = 0;
-                        }
-                    };
-                    std::cout << player << '\n';
+                    weapon_courrante = 0;
                 }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+                {
+                    weapon_courrante = 1;
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+                {
+                    weapon_courrante = 2;
+                }
+
+
 
 
             if(event.type = sf::Event::KeyReleased){
@@ -142,10 +148,13 @@ std::cout << player_list.size() << '\n';
                 }
                 if (event.key.code == sf::Keyboard::P)
                 {
-                    isPressed = false;
+                        player = player+1;
+                        if(player>player_list.size()-1){
+                            player = 0;
+                    };
+                    std::cout << player << '\n';
                 }
             }
-
         }
 
         window.clear(sf::Color(128, 128, 128, 255));
@@ -158,9 +167,19 @@ std::cout << player_list.size() << '\n';
             window.draw((entitee[i])->body);
         }
 
-        /*j1.fctgravity(level);
-        j1.body.move(j1.trajectoire);
-        window.draw(j1.body);*/
+        for ( int p = 0; p< player_list.size();p++){
+            if(player != p){
+                for ( int w = 0; w< weapon_list.size();w++){
+                    (player_list[p])->collision(*weapon_list[w]);
+                }
+            }
+            player_list[p]->mort(entitee,player_list);
+        }
+
+        window.draw(body_target);
+
+        std::cout << "j1 : "<<j1.pv << '\n';
+        std::cout << "j2 : "<<j2.pv << '\n';
 
         window.draw(level);
         window.display();

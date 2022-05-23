@@ -7,6 +7,7 @@
 #include <list>
 #include "Map.hpp"
 #include "entity.hpp"
+#include "weapon.hpp"
 
 class Joueur : public Entity {
 
@@ -16,9 +17,12 @@ public:
     void fctgravity(Map& map);
     void saut();
     void deplacement(int dir);
+    void collision(Weapon& weap);
+    void mort(std::vector<Entity *>& entitee,std::vector<Joueur*>& player_list);
 
     bool regard;
     bool inAir;
+    int pv;
 
 };
 

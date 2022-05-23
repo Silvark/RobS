@@ -20,3 +20,11 @@ bool Entity::sortiemap(sf::Vector2f deplacement){
         return 1;
     }
 }
+
+Entity::Entity(){
+    hauteurobjet = 5;
+    largeurobjet = 5;
+    sf::RectangleShape Bd(sf::Vector2f(largeurobjet, hauteurobjet));
+    Bd.setFillColor(sf::Color::Red);
+    body = Bd ;
+}

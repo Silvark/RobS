@@ -27,6 +27,9 @@ Bombe::Bombe(int &idenification,int x, int y,sf::Vector2f traj){
     idenification ++;
 }
 
+Bombe::Bombe(){
+}
+
 void Bombe::fctgravity(Map& level){
 
       sf::Vector2f position;

@@ -13,7 +13,7 @@ public:
 
     bool sortiemap(sf::Vector2f deplacement);
     virtual void fctgravity(Map& map)= 0;
-
+    Entity();
 
 
     sf::RectangleShape body;

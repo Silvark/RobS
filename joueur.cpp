@@ -1,6 +1,7 @@
 #include "joueur.hpp"
 #include "fonctionUtiles.hpp"
 #include "Map.hpp"
+#include "weapon.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -27,6 +28,7 @@ Joueur::Joueur(int &idenification,int x, int y){
     trajectoire.y = 0;
     body = Bd ;
     body.setPosition(x,y);
+    pv = 50;
     id = idenification;
     idenification ++;
 }
@@ -105,29 +107,33 @@ void Joueur::deplacement(int dir){
 };
 
 
-/*
-void Joueur::collision(std::vector<std::vector<int>> & level){
 
-    sf::Vector2f position;
-    position = this->body.getPosition();
-    this->posX = position.x;
-    this->posY = position.y;
+void Joueur::collision(Weapon& weap){
 
-    if(sortiemap(this->trajectoire)){
+    sf::FloatRect joueurBoundingBox = this->body.getGlobalBounds();
+    sf::FloatRect weapBoundingBox = weap.body.getGlobalBounds();
 
-        sf::Vector2f traj = this->trajectoire;
+    if(joueurBoundingBox.intersects(weapBoundingBox)){
+        this->pv -= weap.radius;
+        weap.body.setPosition(2000,2000);
+        this->trajectoire.x = weap.trajectoire.x*0.05;
+        this->trajectoire.y = weap.trajectoire.y*0.05;
+    }
+}
 
-        if(level[positiontableau(this->posY)][positiontableau(this->posX+this->largeurobjet+this->traj.y)]!=1 && level[positiontableau(this->posY)][positiontableau(this->posX+this->trajectoire)]!=1){
-            traj.x = traj.x + 1;
-            this->trajectoire = traj;
-        }
-        else{
-            traj.y = 0;
-            while(level[positiontableau(this->posY)][positiontableau(this->posX+this->largeurobjet+this->traj.y)]!=1 && level[positiontableau(this->posY)][positiontableau(this->posX+this->trajectoire)]!=1){
-                traj.x = traj.x + 0.1;
+void Joueur::mort(std::vector<Entity *>& entitee,std::vector<Joueur*>& player_list){
+
+    if(this->pv <= 0){
+        std::cout << "DCD" << '\n';
+        for ( int i = 0; i< entitee.size();i++){
+            if(entitee[i]->id==this->id){
+                entitee.erase(entitee.begin()+i);
             }
-            this->trajectoire = traj;
-
+        }
+        for ( int i = 0; i< player_list.size();i++){
+            if(player_list[i]->id==this->id){
+                player_list.erase(player_list.begin()+i);
+            }
         }
     }
-}*/
+}
