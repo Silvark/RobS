@@ -1,4 +1,5 @@
 #include "Button.hpp"
+#include <unistd.h>
 
 int main() {
   sf::RenderWindow window(sf::VideoMode(1280, 720), "RobS");
@@ -51,7 +52,9 @@ int main() {
         }
       }
     }
+    window.clear(sf::Color::White);
     window.draw(mybutton);
     window.display();
+    usleep(16000);
   }
 }

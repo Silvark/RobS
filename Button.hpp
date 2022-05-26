@@ -3,14 +3,12 @@
 
 #include <iostream>
 #include "GUIElement.hpp"
-#include "Commands.hpp"
+
 
 class Button : public GUIElement {
   private:
     sf::RectangleShape element;
     sf::Text desc;
-    bool hovered;
-    Command* action;
 
     // usuellement de la même taille que le bouton, sauf dans le menu de sélection de map
     sf::Vector2f hitboxPos;
