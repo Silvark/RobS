@@ -18,6 +18,7 @@ class GUIElement : public sf::Drawable {
     virtual void onClick() =0;
     virtual void hoveredStatus(const sf::Vector2i& mousePos) =0;
 
+    bool const isHovered() const { return hovered; }
     bool const isAlive() const { return alive; }
     void aliveStatus(bool& value) { alive = value; }
 };

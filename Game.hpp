@@ -11,25 +11,27 @@ class Game {
   private:
     sf::RenderWindow * window;
     Map * terrain;
-    sf::Texture * bgimg;
+    sf::Sprite * bgimg;
 
     std::vector<GUIElement *> gui;
     std::vector<Entity *> entities;
 
   public:
-    Game(sf::RenderWindow * wdw, Map * trn);
+    Game(sf::RenderWindow * wdw, Map * trn, sf::Sprite *);
     ~Game();
 
     void update();
+    bool eventMgr(const sf::Vector2i& mousePos, sf::Event& evt);
+
+    void addGUIElement(GUIElement * guielt);
+    void addGUIElement(std::vector<GUIElement *> guielts);
+    void removeGUIElements();
+    void cleanGUIElements();
 
     void addEntity(Entity * ety);
-    void addGUIElement(GUIElement * guielt);
     void addEntity(std::vector<Entity *> etys);
-    void addGUIElement(std::vector<GUIElement *> guielts);
     void removeEntities();
-    void removeGUIElements();
     void cleanEntities();
-    void cleanGUIElements();
 };
 
 #endif

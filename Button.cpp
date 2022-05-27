@@ -7,7 +7,6 @@ Button::Button(sf::Vector2f pos, sf::Vector2f sz,
   position = pos;
   element = sf::RectangleShape(sz);
   element.setPosition(pos);
-  element.setOutlineThickness(5);
   setColors(sf::Color(54, 145, 209, 255), sf::Color(13, 76, 120, 255));
   action = act;
 
@@ -59,9 +58,7 @@ void Button::hoveredStatus(const sf::Vector2i& mousePos) {
 }
 
 void Button::onClick() {
-  if (hovered) {
-    action->execute();
-  }
+  action->execute();
 }
 
 void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {

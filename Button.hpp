@@ -4,7 +4,6 @@
 #include <iostream>
 #include "GUIElement.hpp"
 
-
 class Button : public GUIElement {
   private:
     sf::RectangleShape element;

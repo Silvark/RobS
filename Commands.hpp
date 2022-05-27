@@ -3,7 +3,12 @@
 
 #include <iostream>
 
+class Game;
+class GUIElement;
+
 class Command {
+  protected:
+    Game * game;
   public:
     virtual void execute() =0;
     virtual ~Command() {}
@@ -11,19 +16,15 @@ class Command {
 
 class ChangeMenu : public Command {
   private:
-    sf::RenderWindow* surface;
-    std::vector<sf::Drawable*> elements;
-  public:
-    ChangeMenu(sf::RenderWindow* window, std::vector<sf::Drawable*> menu) {
-      elements = menu;
-      surface = window;
-    }
+    std::vector<GUIElement *> elements;
 
-    void execute() {
-      for (auto elt : elements) {
-        (*surface).draw(*elt);
-      }
-    }
+  public:
+    ChangeMenu() {}
+
+    void setTarget(Game * instance);
+    void setPayload(std::vector<GUIElement *> menu);
+
+    void execute();
 };
 
 #endif

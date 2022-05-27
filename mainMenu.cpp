@@ -1,60 +1,54 @@
-#include "Button.hpp"
 #include <unistd.h>
 
-int main() {
-  sf::RenderWindow window(sf::VideoMode(1280, 720), "RobS");
+#include "Game.hpp"
+#include "Button.hpp"
 
-  sf::Font myfont = sf::Font();
-  if(!myfont.loadFromFile("RetroGaming.ttf"))
-  {
-     std::cout << "Erreur de chargement de la police d'écriture" << std::endl;
+int main() {
+  // initialisation
+  bool playing = true;
+  Map trn("test2.png");
+  sf::RenderWindow wdw(sf::VideoMode(trn.getSize().x, trn.getSize().y), "RobS");
+  sf::Texture bgtex;
+  sf::Sprite bg;
+
+  if (bgtex.loadFromFile("bg.png")) {
+    bg.setTexture(bgtex);
+  }
+  else {
+    std::cout << "Image de fond illisible."<< std::endl;
+    bg.setColor(sf::Color::White);
   }
 
-  sf::CircleShape* circle = new sf::CircleShape();
-  circle->setRadius(150);
-  circle->setOutlineColor(sf::Color::Red);
-  circle->setOutlineThickness(5);
-  circle->setPosition(10, 20);
+  Game * robs = new Game(&wdw, &trn, &bg);
 
-  sf::RectangleShape* rectangle = new sf::RectangleShape();
-  rectangle->setSize(sf::Vector2f(100, 50));
-  rectangle->setOutlineColor(sf::Color::Red);
-  rectangle->setOutlineThickness(5);
-  rectangle->setPosition(100, 200);
+  // éléments GUI
+  sf::Font myFont;
 
-  std::vector<sf::Drawable*> my_shapes;
-  my_shapes.push_back(circle);
-  my_shapes.push_back(rectangle);
-  ChangeMenu* play = new ChangeMenu(&window, my_shapes);
+  if (!myFont.loadFromFile("RetroGaming.ttf"))
+  {
+    std::cout << "Police d'écriture illisible."<< std::endl;
+  }
+  ChangeMenu * testCmdOne = new ChangeMenu();
+  ChangeMenu * testCmdTwo = new ChangeMenu();
 
-  Button mybutton = Button(sf::Vector2f(1280/2 - 230, 720*0.75), sf::Vector2f(460, 50), "Jouer!", myfont, play);
+  Button testSpawn(sf::Vector2f(20, 20), sf::Vector2f(200, 50), "test", myFont, testCmdOne);
+  Button testSpawnTwo(sf::Vector2f(100, 100), sf::Vector2f(200, 50), "test2", myFont, testCmdTwo);
+  std::vector<GUIElement *> vecOne ; vecOne.push_back(&testSpawn);
+  std::vector<GUIElement *> vecTwo ; vecTwo.push_back(&testSpawnTwo);
+  testCmdOne->setTarget(robs);
+  testCmdOne->setPayload(vecTwo);
+  testCmdTwo->setTarget(robs);
+  testCmdTwo->setPayload(vecOne);
 
-  while (window.isOpen()) {
-    // check if button is hovered
-    mybutton.hoveredStatus(sf::Mouse::getPosition(window));
+  std::cout << "Initialisation terminée" << std::endl;
 
-    sf::Event event;
-    while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
-        window.close();
-        delete play;
-        for (auto i : my_shapes) {
-          delete i;
-        }
-      }
+  robs->addGUIElement(&testSpawn);
+  // boucle de jeu
+  sf::Event evt;
+  while (playing) {
+    sf::Vector2i mouse = sf::Mouse::getPosition(wdw);
 
-      if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
-          mybutton.onClick();
-        }
-        if (event.mouseButton.button == sf::Mouse::Right){
-
-        }
-      }
-    }
-    window.clear(sf::Color::White);
-    window.draw(mybutton);
-    window.display();
-    usleep(16000);
+    playing = robs->eventMgr(mouse, evt);
+    robs->update();
   }
 }
