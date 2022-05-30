@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -Wall
-LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
+LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 OBJ = main.o Map.o entity.o weapon.o mine.o desertEagle.o bombe.o joueur.o fonctionUtiles.o Game.o
 HEAD = Map.hpp entity.hpp weapon.hpp mine.hpp desertEagle.hpp bombe.hpp Button.hpp GUIElement.hpp Commands.hpp joueur.hpp fonctionUtiles.hpp Game.hpp
