@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "entity.hpp"
 #include "Map.hpp"
 #include "GUIElement.hpp"
 
@@ -14,10 +13,13 @@ class Game {
     sf::Sprite * bgimg;
 
     std::vector<GUIElement *> gui;
-    std::vector<Entity *> entities;
+    // std::vector<Entity *> entities;
+    std::vector<sf::Sprite *> elements;
+
+    bool inGame;
 
   public:
-    Game(sf::RenderWindow * wdw, Map * trn, sf::Sprite *);
+    Game(sf::RenderWindow * wdw);
     ~Game();
 
     void update();
@@ -28,10 +30,20 @@ class Game {
     void removeGUIElements();
     void cleanGUIElements();
 
-    void addEntity(Entity * ety);
-    void addEntity(std::vector<Entity *> etys);
-    void removeEntities();
-    void cleanEntities();
+    // void addEntity(Entity * ety);
+    // void addEntity(std::vector<Entity *> etys);
+    // void removeEntities();
+    // void cleanEntities();
+
+    void addElement(sf::Sprite * elt);
+    void addElement(std::vector<sf::Sprite *> elts);
+    void removeElements();
+
+    void setBackground(sf::Sprite * sprite) { bgimg = sprite; }
+    void setMap(std::string path);
+    void setInGameStatus(bool value);
+
+    bool const getInGameStatus() const { return inGame; }
 };
 
 #endif

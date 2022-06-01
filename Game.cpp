@@ -1,9 +1,8 @@
 #include "Game.hpp"
 
-Game::Game(sf::RenderWindow * wdw, Map * trn, sf::Sprite * bg) {
+Game::Game(sf::RenderWindow * wdw) {
   window = wdw;
-  terrain = trn;
-  bgimg = bg;
+  inGame = false;
 }
 
 Game::~Game() {
@@ -26,17 +25,25 @@ void Game::update() {
   */
   window->clear();
   window->draw(*bgimg, sf::RenderStates::Default);
-  window->draw(*terrain, sf::RenderStates::Default);
 
-  // // TODO : DESSIN DES ENTITES VIA CLASSE
-  // for (auto elt : entities) {
-  //   // /!\ DEPLACEMENT ENTITES
-  //   window->draw(*elt, sf::RenderStates::Default);
-  // }
+  if (inGame) {
+    window->draw(*terrain, sf::RenderStates::Default);
+
+    // // TODO : DESSIN DES ENTITES VIA CLASSE
+    //  for (auto elt : entities) {
+    //   // /!\ DEPLACEMENT ENTITES
+    //   window->draw(*elt, sf::RenderStates::Default);
+    // }
+  }
 
   for (auto elt : gui) {
     window->draw(*elt, sf::RenderStates::Default);
   }
+
+  for (auto elt : elements) {
+    window->draw(*elt, sf::RenderStates::Default);
+  }
+
   window->display();
 }
 
@@ -47,6 +54,10 @@ bool Game::eventMgr(const sf::Vector2i& mousePos, sf::Event& evt) {
     return true;
   }
 
+  if (evt.type == sf::Event::Closed) {
+      return false;
+  }
+
   for (auto elt : gui) {
     elt->hoveredStatus(mousePos);
     if (elt->isHovered() && evt.type == sf::Event::MouseButtonPressed) {
@@ -55,11 +66,6 @@ bool Game::eventMgr(const sf::Vector2i& mousePos, sf::Event& evt) {
       }
     }
   }
-
-  if (evt.type == sf::Event::Closed) {
-      return false;
-  }
-
   // autre type de gestion d'event?
   return true;
 }
@@ -82,20 +88,36 @@ void Game::cleanGUIElements() {
   }
 }
 
-void Game::addEntity(Entity * ety) { entities.push_back(ety); }
-void Game::addEntity(std::vector<Entity *> etys) {
-  for (auto elt : etys) {
-    addEntity(elt);
+// void Game::addEntity(Entity * ety) { entities.push_back(ety); }
+// void Game::addEntity(std::vector<Entity *> etys) {
+//   for (auto elt : etys) {
+//     addEntity(elt);
+//   }
+// }
+// void Game::removeEntities() { entities.clear(); }
+// void Game::cleanEntities() {
+//   int i = 0;
+//   for (auto elt : entities) {
+//     if (false) { // /!\ CHECK VIE ENTITE
+//       delete elt;
+//       entities.erase(entities.begin() + i);
+//     }
+//     i++;
+//   }
+// }
+
+void Game::addElement(sf::Sprite * elt) { elements.push_back(elt); }
+void Game::addElement(std::vector<sf::Sprite *> elts) {
+  for (auto elt : elts) {
+    addElement(elt);
   }
 }
-void Game::removeEntities() { entities.clear(); }
-void Game::cleanEntities() {
-  int i = 0;
-  for (auto elt : entities) {
-    if (false) { // /!\ CHECK VIE ENTITE
-      delete elt;
-      entities.erase(entities.begin() + i);
-    }
-    i++;
-  }
+void Game::removeElements() { elements.clear(); }
+
+void Game::setMap(std::string path) {
+  terrain = new Map(path);
+}
+
+void Game::setInGameStatus(bool value) {
+  inGame = value;
 }
