@@ -11,10 +11,11 @@ class Mine : public Weapon {
 
 public:
 
-    Mine(int &identification,int x, int y,sf::Vector2f traj);
+    Mine(int &identification,int x, int y,int equipe);
     ~Mine();
     void fctgravity(Map& map);
 
+    int team;
 };
 
 

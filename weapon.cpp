@@ -27,4 +27,8 @@ void Weapon::explode(Map& map,int posX,int posY){
        }
    }
    map.updateMap(minX, minY, (this->radius*2), (this->radius)*2);
+
+   this->degats_explosion.setPosition(posX+this->largeurobjet/2-this->radius+this->trajectoire.x,posY+this->hauteurobjet/2-this->radius+this->trajectoire.y);
+   this->degats_explosion.setRadius(this->radius);
+   this->body.setPosition(2000,2000);
 }

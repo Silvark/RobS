@@ -8,21 +8,24 @@
 #include "Map.hpp"
 #include "entity.hpp"
 #include "weapon.hpp"
+#include "mine.hpp"
 
 class Joueur : public Entity {
 
 public:
 
-    Joueur(int &idenification,int x, int y);
+    Joueur(int &idenification,int x, int y,int equipe);
     void fctgravity(Map& map);
     void saut();
     void deplacement(int dir);
-    void collision(Weapon& weap);
-    void mort(std::vector<Entity *>& entitee,std::vector<Joueur*>& player_list);
+    void collisionWeapon(Weapon& weap,Map& level);
+    bool collisionEau(sf::RectangleShape& eau);
+    void mort(std::vector<Entity *>& entitee,std::vector<Joueur*>& player_list,Map& level);
 
     bool regard;
     bool inAir;
     int pv;
+    int team;
 
 };
 

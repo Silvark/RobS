@@ -11,9 +11,7 @@ class Weapon : public Entity{
 protected:
 public:
     virtual void fctgravity(Map& map) =0;
-    void explode(Map& map ,int posX,int posY);
-
-    int radius;
+    void explode(Map& map,int posX,int posY);
 };
 
 

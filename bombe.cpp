@@ -12,19 +12,28 @@
 #define fenetrecasehauteur 40
 
 
-Bombe::Bombe(int &idenification,int x, int y,sf::Vector2f traj){
+Bombe::Bombe(int &idenification,int x, int y){
 
     hauteurobjet = 10;
     largeurobjet = 10;
     sf::RectangleShape Bd(sf::Vector2f(largeurobjet, hauteurobjet));
     posX = x;
     posY = y;
+
+    sf::Vector2f traj;
+    traj.x = 0;
+    traj.y = 0;
+
     trajectoire = traj;
+
     radius = 50;
     body = Bd ;
     body.setPosition(x,y);
     id = idenification;
     idenification ++;
+    sf::CircleShape expl(0);
+    degats_explosion = expl;
+    degats_explosion.setFillColor(sf::Color(255, 230,0));
 }
 
 Bombe::Bombe(){
@@ -50,9 +59,9 @@ void Bombe::fctgravity(Map& level){
                   traj.y = traj.y + 0.1;
               }
               explode(level, position.x + traj.x + this->largeurobjet/2, position.y + traj.y + this->hauteurobjet/2);
-              std::cout << "BOOOM" << '\n';
-              traj.y = 2000;
-              this->trajectoire = traj;
+              //std::cout << "BOOOM" << '\n';
+              //traj.y = 2000;
+              //this->trajectoire = traj;
           }
 
       }

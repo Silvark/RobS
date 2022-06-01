@@ -13,7 +13,7 @@ public:
 
     Desert();
 
-    Desert(int &identification,int x, int y,sf::Vector2f traj);
+    Desert(int &identification,int x, int y);
     void fctgravity(Map& map);
 
 };

@@ -2,6 +2,7 @@
 #include "fonctionUtiles.hpp"
 #include "Map.hpp"
 #include "weapon.hpp"
+#include "mine.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -14,14 +15,14 @@
 #define fenetrecasehauteur 40
 
 
-Joueur::Joueur(int &idenification,int x, int y){
+Joueur::Joueur(int &idenification,int x, int y,int equipe){
 
     hauteurobjet = 10;
     largeurobjet = 10;
     regard = 0;
     inAir = 1;
     sf::RectangleShape Bd(sf::Vector2f(largeurobjet, hauteurobjet));
-    Bd.setFillColor(sf::Color::Cyan);
+    Bd.setFillColor(sf::Color::Green);
     posX = x;
     posY = y;
     trajectoire.x = 0;
@@ -31,6 +32,22 @@ Joueur::Joueur(int &idenification,int x, int y){
     pv = 50;
     id = idenification;
     idenification ++;
+    team = equipe;
+    body.setOutlineThickness(2);
+
+    radius = 15;
+
+    if(team == 1){
+        body.setOutlineColor(sf::Color(0, 0, 255));
+    }
+    else{
+        body.setOutlineColor(sf::Color(255, 0, 0));
+    }
+
+    sf::CircleShape expl(0);
+    degats_explosion = expl;
+    degats_explosion.setFillColor(sf::Color(255, 230,0));
+
 }
 
 void Joueur::fctgravity(Map& level){
@@ -51,6 +68,9 @@ void Joueur::fctgravity(Map& level){
                 traj.y = traj.y + 1;
             }
             this->trajectoire = traj;
+            /*if(traj.y>20){
+                this->pv = 0;
+            }*/
         }
         else {
             //std::cout << "chutelente" << '\n';
@@ -58,6 +78,7 @@ void Joueur::fctgravity(Map& level){
             while(level.getPixel(position.x+traj.x, position.y + this->hauteurobjet+traj.y) == false && level.getPixel(position.x + this->largeurobjet+traj.x, position.y + this->hauteurobjet+traj.y) == false){
                 traj.y = traj.y + 0.1;
             }
+
             traj.x = 0;
             if(this->inAir == 1){
                 traj.y = 0;
@@ -70,10 +91,6 @@ void Joueur::fctgravity(Map& level){
             this->trajectoire = traj;
         }
 
-        //else{
-
-
-        //}
     }
 }
 
@@ -108,23 +125,49 @@ void Joueur::deplacement(int dir){
 
 
 
-void Joueur::collision(Weapon& weap){
+void Joueur::collisionWeapon(Weapon& weap,Map& level){
 
     sf::FloatRect joueurBoundingBox = this->body.getGlobalBounds();
     sf::FloatRect weapBoundingBox = weap.body.getGlobalBounds();
+    sf::FloatRect weapRadiusBoundingBox = weap.degats_explosion.getGlobalBounds();
 
     if(joueurBoundingBox.intersects(weapBoundingBox)){
+        std::cout << "colisisisi" << '\n';
+        weap.explode(level, weap.posX + weap.largeurobjet/2, weap.posY+ weap.hauteurobjet/2);
         this->pv -= weap.radius;
-        weap.body.setPosition(2000,2000);
-        this->trajectoire.x = weap.trajectoire.x*0.05;
-        this->trajectoire.y = weap.trajectoire.y*0.05;
+        this->trajectoire.x = weap.trajectoire.x*0.5;
+        this->trajectoire.y = weap.trajectoire.y*0.5;
+        this->body.setFillColor(sf::Color(255+(255/100)*(100-this->pv), 255-(255/100)*(100-this->pv), 0));
     }
+    else if(joueurBoundingBox.intersects(weapRadiusBoundingBox)){
+
+        int distance = DistancePoint(this->posX,this->posY,weap.posX+weap.largeurobjet/2-weap.radius,weap.posY+weap.hauteurobjet/2-weap.radius);
+        int perte = 0.5*distance+(weap.radius/2);
+        this->pv -= perte;
+        this->trajectoire.x = weap.trajectoire.x*0.5;
+        this->trajectoire.y = weap.trajectoire.y*0.5;
+        this->body.setFillColor(sf::Color(255+(255/100)*(100-this->pv), 255-(255/100)*(100-this->pv), 0));
+    }
+
 }
 
-void Joueur::mort(std::vector<Entity *>& entitee,std::vector<Joueur*>& player_list){
+bool Joueur::collisionEau(sf::RectangleShape& eau){
+    sf::FloatRect joueurBoundingBox = this->body.getGlobalBounds();
+    sf::FloatRect eauBoundingBox = eau.getGlobalBounds();
+    bool retour = 0;
+    if(joueurBoundingBox.intersects(eauBoundingBox)){
+        this->pv = 0;
+        retour = 1;
+    }
+    return retour;
+}
+
+
+void Joueur::mort(std::vector<Entity *>& entitee,std::vector<Joueur*>& player_list,Map& level){
 
     if(this->pv <= 0){
         std::cout << "DCD" << '\n';
+        this->explode(level,this->posX+this->largeurobjet/2,this->posY+this->hauteurobjet/2);
         for ( int i = 0; i< entitee.size();i++){
             if(entitee[i]->id==this->id){
                 entitee.erase(entitee.begin()+i);

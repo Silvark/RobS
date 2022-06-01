@@ -13,6 +13,8 @@ public:
 
     bool sortiemap(sf::Vector2f deplacement);
     virtual void fctgravity(Map& map)= 0;
+    void explode(Map& map,int posX,int posY);
+    void update(sf::RenderWindow& window, Map& level);
     Entity();
 
 
@@ -23,6 +25,8 @@ public:
     int hauteurobjet;
     int largeurobjet;
     int id;
+    int radius;
+    sf::CircleShape degats_explosion;
 
 
 };

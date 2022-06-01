@@ -33,41 +33,53 @@ int main()
 
     int id_courrant = 0;
 
-    sf::Vector2f traj1;
-
     sf::Vector2f trajectory;
     bool target =0;
     sf::Vector2f targetPoint;
 
-    int sizeEntity;
+    int size_entity_list;
+    int size_player_list;
+    int size_weapon_List;
 
-    traj1.x = 0;
-    traj1.y = 0;
+    Bombe b1(id_courrant,-10,0);
+    Desert d1(id_courrant,-10,0);
+    Desert d2(id_courrant,-10,0);
 
-    Bombe b1(id_courrant,-10,0,traj1);
-    Desert d1(id_courrant,-10,0,traj1);
-    Mine m1(id_courrant,-10,0,traj1);
+    Mine m1(id_courrant,-10,0,1);
+    Mine m2(id_courrant,-10,0,1);
+    Mine m3(id_courrant,-10,0,1);
+    Mine m4(id_courrant,-10,0,2);
+    Mine m5(id_courrant,-10,0,2);
+    Mine m6(id_courrant,-10,0,2);
 
-    Joueur j1(id_courrant,750,150);
-    Joueur j2(id_courrant,300,150);
+    int mine_courrante = 3;
+
+    Joueur j1(id_courrant,750,150,1);
+    Joueur j2(id_courrant,300,150,2);
+
 
     std::vector<Entity *> entitee;
-    entitee.push_back(&b1);
-    entitee.push_back(&d1);
-    entitee.push_back(&m1);
     entitee.push_back(&j1);
     entitee.push_back(&j2);
+    entitee.push_back(&d2);
 
-    int weapon_courrante;
+    int weapon_courrante = 0;
     std::vector<Weapon *> weapon_list;
     weapon_list.push_back(&b1);
     weapon_list.push_back(&d1);
+    weapon_list.push_back(&d2);
     weapon_list.push_back(&m1);
+    weapon_list.push_back(&m2);
+    weapon_list.push_back(&m3);
+    weapon_list.push_back(&m4);
+    weapon_list.push_back(&m5);
+    weapon_list.push_back(&m6);
 
     int player = 0;
     std::vector<Joueur*> player_list;
     player_list.push_back(&j1);
     player_list.push_back(&j2);
+
 
     sf::Vector2f position_target;
     position_target.x = 0;
@@ -76,8 +88,10 @@ int main()
     sf::RectangleShape body_target(sf::Vector2f(4, 4));
     body_target.setFillColor((sf::Color::Red));
 
-    //std::cout << "taille liste" << '\n';
-    //std::cout << player_list.size() << '\n';
+    sf::RectangleShape eau(sf::Vector2f(level.getSize().x, level.getSize().y));
+    eau.setFillColor(sf::Color(0,0,255,128));
+    int hauteurEau = level.getSize().y;
+    eau.setPosition(0,hauteurEau);
 
     while (window.isOpen())
     {
@@ -102,8 +116,35 @@ int main()
                 if (event.mouseButton.button == sf::Mouse::Left){
 
                     if(target == 1){
-                        weapon_list[weapon_courrante]->trajectoire = trajectory;
-                        weapon_list[weapon_courrante]->body.setPosition(player_list[player]->posX+player_list[player]->largeurobjet/2, player_list[player]->posY+player_list[player]->hauteurobjet/2);
+
+                        entitee.pop_back();
+                        std::cout << "cava" << '\n';
+                        if (weapon_courrante==2){
+                            if(mine_courrante==9){
+                                entitee.erase(entitee.begin()+2);
+                                mine_courrante = 3;
+                            }
+                            entitee.push_back(weapon_list[mine_courrante]);
+                            entitee.push_back(weapon_list[mine_courrante]);
+                            mine_courrante +=1;
+                        }
+                        else{
+                            entitee.push_back(weapon_list[weapon_courrante]);
+                        }
+
+                        sf::Vector2f position;
+                        if(targetPoint.x<player_list[player]->posX){
+                            position.x = player_list[player]->posX-5;
+                        }
+                        else{
+                            position.x = player_list[player]->posX+player_list[player]->largeurobjet+5;
+                        }
+
+                        position.y = player_list[player]->posY+player_list[player]->hauteurobjet/2;
+
+                        entitee[entitee.size()-1]->trajectoire = trajectory;
+                        entitee[entitee.size()-1]->body.setPosition(position.x,position.y);
+
                         target = 0;
                     }
                 }
@@ -134,9 +175,6 @@ int main()
                     weapon_courrante = 2;
                 }
 
-
-
-
             if(event.type = sf::Event::KeyReleased){
                 if (event.key.code == sf::Keyboard::D)
                 {
@@ -148,40 +186,43 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::P)
                 {
-                        player = player+1;
-                        if(player>player_list.size()-1){
-                            player = 0;
-                    };
-                    std::cout << player << '\n';
+                    player = player+1;
+                    if(player>player_list.size()-1){
+                        player = 0;
+                        hauteurEau -=10;
+                        eau.setPosition(0,hauteurEau);
+
+                    }
                 }
             }
         }
 
         window.clear(sf::Color(128, 128, 128, 255));
 
-        sizeEntity = entitee.size();
+        size_entity_list = entitee.size();
+        size_player_list = player_list.size();
+        size_weapon_List = weapon_list.size();
 
-        for ( int i = 0; i< sizeEntity;i++){
-            (entitee[i])->fctgravity(level);
-            (entitee[i])->body.move((entitee[i])->trajectoire);
-            window.draw((entitee[i])->body);
+        for ( int i = 0; i< size_entity_list;i++){
+            (entitee[i])->update(window,level);
         }
 
-        for ( int p = 0; p< player_list.size();p++){
-            if(player != p){
-                for ( int w = 0; w< weapon_list.size();w++){
-                    (player_list[p])->collision(*weapon_list[w]);
-                }
+
+        for ( int p = 0; p< size_player_list;p++){
+            if((player_list[p])->collisionEau(eau)){
+                player_list[p]->mort(entitee,player_list,level);
             }
-            player_list[p]->mort(entitee,player_list);
+            else{
+                for ( int w = 0; w< size_weapon_List;w++){
+                    (player_list[p])->collisionWeapon(*weapon_list[w],level);
+                }
+                player_list[p]->mort(entitee,player_list,level);
+            }
         }
-
-        window.draw(body_target);
-
-        std::cout << "j1 : "<<j1.pv << '\n';
-        std::cout << "j2 : "<<j2.pv << '\n';
 
         window.draw(level);
+        window.draw(eau);
+        window.draw(body_target);
         window.display();
         usleep(50000);
     }
