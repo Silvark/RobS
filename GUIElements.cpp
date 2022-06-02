@@ -1,4 +1,4 @@
-#include "Button.hpp"
+#include "GUIElements.hpp"
 
 Button::Button(sf::Vector2f pos, sf::Vector2f sz,
                std::string txt, sf::Font& font, Command* act)

@@ -2,7 +2,6 @@
 #include <SFML/Audio.hpp>
 
 #include "Game.hpp"
-#include "Button.hpp"
 
 sf::Sprite * spriteFromTexture(sf::Texture * texture, bool setOriginToMiddle, float scale) {
   sf::Sprite * sprite = new sf::Sprite();
@@ -20,11 +19,15 @@ int main() {
   // Initialisation globale
   /// Jeu
   sf::RenderWindow * window = new sf::RenderWindow(sf::VideoMode(1280, 720), "RobS");
+  Game * robs = new Game(window);
+  std::cout << "[INFO] Création du jeu..." << std::endl;
 
+  /// Police
   sf::Font myFont;
-  if (!myFont.loadFromFile("RetroGaming.ttf")) {
-    std::cout << "Police d'écriture illisible."<< std::endl;
+  if (!myFont.loadFromFile("assets/RetroGaming.ttf")) {
+    std::cout << "[ERR] Police d'écriture illisible."<< std::endl;
   }
+  else { std::cout << "[INFO] Police d'écriture initialisée!"  << std::endl; }
 
   /// Textures
   sf::Texture bgimg_tex; bgimg_tex.loadFromFile("assets/bg.png");
@@ -33,19 +36,20 @@ int main() {
   sf::Texture robslogo_tex; robslogo_tex.loadFromFile("assets/robs.png");
   sf::Texture introOne_tex; introOne_tex.loadFromFile("assets/kartemer.png");
   sf::Texture introTwo_tex; introTwo_tex.loadFromFile("assets/battle.png");
-
-  Game * robs = new Game(window);
+  std::cout << "[INFO] Textures chargées! " << std::endl;
 
   // Main Menu
   /// Initialisation
   //// Background
   sf::Sprite * bgSprite = spriteFromTexture(&bgimg_tex, false, 1);
   robs->setBackground(bgSprite);
+  std::cout << "[INFO] Mise à jour du fond..." << std::endl;
 
   //// Logo
   sf::Sprite * robsLogo = spriteFromTexture(&robslogo_tex, true, 1);
   robsLogo->setPosition(1280/2, 720*0.3);
   robs->addElement(robsLogo);
+  std::cout << "[INFO] Ajout du logo..." << std::endl;
 
   //// Btn "Jouer"
   std::vector<sf::Sprite *> * mapSelImgs = new std::vector<sf::Sprite *>;
@@ -53,6 +57,7 @@ int main() {
   ChangeMenu * toMapSel = new ChangeMenu(robs, mapSelBtns, mapSelImgs);
   Button * btnToMapSel = new Button(sf::Vector2f(1280/2 - 230, 720*0.75), sf::Vector2f(460, 50), "Jouer!", myFont, toMapSel);
   robs->addGUIElement(btnToMapSel);
+  std::cout << "[INFO] Création de l'interface 1/3..." << std::endl;
 
   // Map Selection
   /// Btns chgt map
@@ -65,6 +70,7 @@ int main() {
   mapSelBtns->push_back(btnSelMapone);
   mapSelBtns->push_back(btnSelMaptwo);
   mapSelBtns->push_back(btnToGame);
+  std::cout << "[INFO] Création de l'interface 2/3..."<< std::endl;
 
   // Affichage maps
   sf::Sprite * mapone = spriteFromTexture(&map01_tex, true, 0.36);
@@ -73,6 +79,7 @@ int main() {
   maptwo->setPosition(1280*0.7, 720*0.4);
   mapSelImgs->push_back(mapone);
   mapSelImgs->push_back(maptwo);
+  std::cout << "[INFO] Création de l'interface 3/3..." << std::endl;
 
   // Intro
   /// Initialisation
@@ -92,6 +99,7 @@ int main() {
   if (!music.openFromFile("assets/ost.ogg"))
     return -1; // error
   music.play();
+  std::cout << "[INFO] Démarrage de la musique..." << std::endl;
 
   while (introIsPlaying) {
     // get_close

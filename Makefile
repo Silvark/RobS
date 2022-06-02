@@ -2,14 +2,11 @@ CC = g++
 CFLAGS = -Wall
 LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-OBJ = main.o Map.o entity.o weapon.o mine.o desertEagle.o bombe.o joueur.o fonctionUtiles.o Game.o
-HEAD = Map.hpp entity.hpp weapon.hpp mine.hpp desertEagle.hpp bombe.hpp Button.hpp GUIElement.hpp Commands.hpp joueur.hpp fonctionUtiles.hpp Game.hpp
+OBJ = Commands.o Entity.o Player.o Weapons.o GUIElements.o Map.o Game.o
+HEAD = Commands.hpp Entity.hpp Player.hpp Weapons.hpp GUIElements.hpp Map.hpp Game.hpp
 all: main
 
-main: $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
-
-mainmenu: mainMenu.o Button.o Commands.o Game.o Map.o
+mainmenu: mainMenu.o $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 %.o: %.cpp $(HEAD)
@@ -17,4 +14,7 @@ mainmenu: mainMenu.o Button.o Commands.o Game.o Map.o
 
 .PHONY: clean
 clean:
-	rm -f *.o main mainmenu
+	rm -f *.o
+
+purge: clean
+	rm -f mainmenu

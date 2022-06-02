@@ -1,10 +1,10 @@
 #ifndef GAM_HPP
 #define GAM_HPP
 
-#include <SFML/Graphics.hpp>
-
 #include "Map.hpp"
-#include "GUIElement.hpp"
+#include "Player.hpp"
+#include "Weapons.hpp"
+#include "GUIElements.hpp"
 
 class Game {
   private:
@@ -13,7 +13,7 @@ class Game {
     sf::Sprite * bgimg;
 
     std::vector<GUIElement *> gui;
-    // std::vector<Entity *> entities;
+    std::vector<Entity *> entities;
     std::vector<sf::Sprite *> elements;
 
     bool inGame;
@@ -30,10 +30,10 @@ class Game {
     void removeGUIElements();
     void cleanGUIElements();
 
-    // void addEntity(Entity * ety);
-    // void addEntity(std::vector<Entity *> etys);
-    // void removeEntities();
-    // void cleanEntities();
+    void addEntity(Entity * ety);
+    void addEntity(std::vector<Entity *> etys);
+    void removeEntities();
+    void cleanEntities();
 
     void addElement(sf::Sprite * elt);
     void addElement(std::vector<sf::Sprite *> elts);
