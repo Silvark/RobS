@@ -5,6 +5,8 @@
 #include <cmath>
 #include <list>
 
+#include <time.h>
+
 #include "fonctionUtiles.hpp"
 
 #include "Map.hpp"
@@ -32,6 +34,10 @@ int main()
     sf::RenderWindow window(sf::VideoMode(level.getSize().x, level.getSize().y), "RobS");
 
     int id_courrant = 0;
+
+    bool isPress = false;
+
+    clock_t debut,fin;
 
     sf::Vector2f trajectory;
     bool target =0;
@@ -80,6 +86,9 @@ int main()
     player_list.push_back(&j1);
     player_list.push_back(&j2);
 
+    int team1 = 1;
+    int team2 = 1;
+
 
     sf::Vector2f position_target;
     position_target.x = 0;
@@ -88,17 +97,40 @@ int main()
     sf::RectangleShape body_target(sf::Vector2f(4, 4));
     body_target.setFillColor((sf::Color::Red));
 
+    sf::CircleShape joueurActuel(5, 3);
+    joueurActuel.setFillColor((sf::Color::Red));
+    joueurActuel.setRotation(180);
+
     sf::RectangleShape eau(sf::Vector2f(level.getSize().x, level.getSize().y));
     eau.setFillColor(sf::Color(0,0,255,128));
     int hauteurEau = level.getSize().y;
     eau.setPosition(0,hauteurEau);
 
+    debut = clock();
+
     while (window.isOpen())
     {
         sf::Event event;
 
+        fin = clock();
+
+        std::cout << "timer = "<<fin<<" temps "<<(((float(fin-debut)/CLOCKS_PER_SEC)*100)/2) << '\n';
+
+        if (((float(fin-debut)/CLOCKS_PER_SEC)*100) >= 25){
+            debut = clock();
+            player = player+1;
+            if(player>player_list.size()-1){
+                player = 0;
+                hauteurEau -=10;
+                eau.setPosition(0,hauteurEau);
+            }
+        }
+
+        joueurActuel.setPosition(player_list[player]->posX+player_list[player]->largeurobjet,player_list[player]->posY-10);
+
         while (window.pollEvent(event))
         {
+
             if (event.type == sf::Event::Closed)
                 window.close();
 
@@ -146,6 +178,15 @@ int main()
                         entitee[entitee.size()-1]->body.setPosition(position.x,position.y);
 
                         target = 0;
+
+                        player = player+1;
+                        if(player>player_list.size()-1){
+                            player = 0;
+                            hauteurEau -=10;
+                            eau.setPosition(0,hauteurEau);
+                            debut = clock();
+                        }
+
                     }
                 }
 
@@ -175,6 +216,12 @@ int main()
                     weapon_courrante = 2;
                 }
 
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+                {
+                    isPress = true;
+                }
+
+
             if(event.type = sf::Event::KeyReleased){
                 if (event.key.code == sf::Keyboard::D)
                 {
@@ -186,12 +233,15 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::P)
                 {
-                    player = player+1;
-                    if(player>player_list.size()-1){
-                        player = 0;
-                        hauteurEau -=10;
-                        eau.setPosition(0,hauteurEau);
-
+                    if(isPress == true){
+                        player = player+1;
+                        if(player>player_list.size()-1){
+                            player = 0;
+                            hauteurEau -=10;
+                            eau.setPosition(0,hauteurEau);
+                            debut = clock();
+                        }
+                        isPress = false;
                     }
                 }
             }
@@ -223,6 +273,7 @@ int main()
         window.draw(level);
         window.draw(eau);
         window.draw(body_target);
+        window.draw(joueurActuel);
         window.display();
         usleep(50000);
     }
