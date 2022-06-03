@@ -1,17 +1,16 @@
 #ifndef PLY_HPP
 #define PLY_HPP
 
-#include "Entity.hpp"
+#include "Rob.hpp"
 
-class Player : public Entity {
+class Player {
+  private:
+    std::vector<Rob *> playable;
+
   public:
-    int const getHealth() { return health; }
-    int const getEnergy() { return energy; }
+    Player();
+    ~Player();
 
-    void setHealth(int value) { health = value; }
-    void setEnergy(int value) { energy = value; }
-
-    void move();
 };
 
 #endif

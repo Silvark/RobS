@@ -5,6 +5,7 @@
 #include "Player.hpp"
 #include "Weapons.hpp"
 #include "GUIElements.hpp"
+#include "GameLogic.hpp"
 
 class Game {
   private:
@@ -17,13 +18,13 @@ class Game {
     std::vector<sf::Sprite *> elements;
 
     bool inGame;
+    GameLogic * brain;
 
   public:
-    Game(sf::RenderWindow * wdw);
+    Game(sf::RenderWindow * wdw, GameLogic * brn);
     ~Game();
 
     void update();
-    bool eventMgr(const sf::Vector2i& mousePos, sf::Event& evt);
 
     void addGUIElement(GUIElement * guielt);
     void addGUIElement(std::vector<GUIElement *> guielts);

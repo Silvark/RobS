@@ -135,23 +135,22 @@ int main() {
 
   // Menu principal
   guiIsDisplayed = true;
-  sf::Event menuEvents;
   window->clear();
 
   while (guiIsDisplayed) {
     // get_close
-    if ((window->pollEvent(menuEvents) && menuEvents.type == sf::Event::Closed) || robs->getInGameStatus() == true) {
+    if (robs->getInGameStatus() == true || robs->brain->getFSM() == 99) {
       music.stop();
       guiIsDisplayed = false;
     }
 
-    robs->eventMgr(sf::Mouse::getPosition(*window), menuEvents);
+    robs->brain->eventMgr(window, sf::Mouse::getPosition(*window));
     robs->update();
   }
 
   // Boucle de jeu
   while (robs->getInGameStatus() == true) {
-    if (window->pollEvent(menuEvents) && menuEvents.type == sf::Event::Closed) {
+    if (robs->brain->getFSM() == 99) {
       robs->setInGameStatus(false);
     }
 
@@ -160,7 +159,7 @@ int main() {
     // 2. gérer les tours
     // bref, voila, tout ça à faire dans Game soon
 
-    robs->eventMgr(sf::Mouse::getPosition(*window), menuEvents);
+    robs->brain->eventMgr(window, sf::Mouse::getPosition(*window));
     robs->update();
   }
 

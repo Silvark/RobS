@@ -1,8 +1,9 @@
 #include "Game.hpp"
 
-Game::Game(sf::RenderWindow * wdw) {
+Game::Game(sf::RenderWindow * wdw, GameLogic * brn) {
   window = wdw;
   inGame = false;
+  brain = brn;
 }
 
 Game::~Game() {
@@ -46,29 +47,6 @@ void Game::update() {
   }
 
   window->display();
-}
-
-bool Game::eventMgr(const sf::Vector2i& mousePos, sf::Event& evt) {
-  // gestion chgt GUI
-  if (!(window->pollEvent(evt))) {
-    // Pas d'événement
-    return true;
-  }
-
-  if (evt.type == sf::Event::Closed) {
-      return false;
-  }
-
-  for (auto elt : gui) {
-    elt->hoveredStatus(mousePos);
-    if (elt->isHovered() && evt.type == sf::Event::MouseButtonPressed) {
-      if (evt.mouseButton.button == sf::Mouse::Left) {
-        elt->onClick();
-      }
-    }
-  }
-  // autre type de gestion d'event?
-  return true;
 }
 
 void Game::addGUIElement(GUIElement * guielt) { gui.push_back(guielt); }

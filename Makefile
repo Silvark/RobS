@@ -4,9 +4,10 @@ LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 OBJ = Commands.o Entity.o Player.o Weapons.o GUIElements.o Map.o Game.o
 HEAD = Commands.hpp Entity.hpp Player.hpp Weapons.hpp GUIElements.hpp Map.hpp Game.hpp
-all: main
 
-mainmenu: mainMenu.o $(OBJ)
+all: main clean
+
+main: main.o $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 %.o: %.cpp $(HEAD)
@@ -17,4 +18,4 @@ clean:
 	rm -f *.o
 
 purge: clean
-	rm -f mainmenu
+	rm -f main
