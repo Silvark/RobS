@@ -21,7 +21,7 @@ class Game {
     GameLogic * brain;
 
   public:
-    Game(sf::RenderWindow * wdw, GameLogic * brn);
+    Game();
     ~Game();
 
     void update();
@@ -30,11 +30,13 @@ class Game {
     void addGUIElement(std::vector<GUIElement *> guielts);
     void removeGUIElements();
     void cleanGUIElements();
+    std::vector<GUIElement *> * const getGUI() { return &gui; }
 
     void addEntity(Entity * ety);
     void addEntity(std::vector<Entity *> etys);
     void removeEntities();
     void cleanEntities();
+    std::vector<Entity *> * const getEntities() { return &entities; }
 
     void addElement(sf::Sprite * elt);
     void addElement(std::vector<sf::Sprite *> elts);
@@ -44,7 +46,9 @@ class Game {
     void setMap(std::string path);
     void setInGameStatus(bool value);
 
-    bool const getInGameStatus() const { return inGame; }
+    bool const getInGameStatus() { return inGame; }
+    sf::RenderWindow * const getWindow() { return window; }
+    GameLogic * const getBrain() { return brain; }
 };
 
 #endif

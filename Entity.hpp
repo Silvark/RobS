@@ -19,6 +19,8 @@ class Entity : public sf::Drawable {
 
     virtual void move() =0;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const =0;
+
+    void setSprite(sf::Texture * tex);
 };
 
 #endif

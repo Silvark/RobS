@@ -17,3 +17,7 @@ Entity::Entity(sf::Vector2f pos, sf::Vector2f vel, int h, int e, sf::Texture * t
   energy = e;
   sprite->setTexture(*tex);
 }
+
+void Entity::setSprite(sf::Texture * tex) {
+  sprite->setTexture(*tex);
+}

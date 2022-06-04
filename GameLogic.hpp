@@ -1,7 +1,7 @@
 #ifndef LGK_HPP
 #define LGK_HPP
 
-#include "Rob.hpp"
+#include "Player.hpp"
 class Game;
 
 class GameLogic {
@@ -31,12 +31,14 @@ class GameLogic {
     GameLogic();
     ~GameLogic();
 
-    bool eventMgr(Game * game, const sf::Vector2i& mousePos);
+    void eventMgr(Game * game, const sf::Vector2i& mousePos);
 
     void setControlTarget(Rob * playable);
     Rob * const getControlTarget() const;
 
-    void placeRob(sf::Vector2f position);
+    int const getFSM();
+
+    Rob * placeRob(sf::Vector2f position, Player * owner);
 
 };
 

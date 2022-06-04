@@ -16,51 +16,58 @@ sf::Sprite * spriteFromTexture(sf::Texture * texture, bool setOriginToMiddle, fl
 }
 
 int main() {
+  // [SKIP] ici pour passer l'intro
+  bool introIsPlaying = false;
+
   // Initialisation globale
   /// Jeu
-  sf::RenderWindow * window = new sf::RenderWindow(sf::VideoMode(1280, 720), "RobS");
-  Game * robs = new Game(window);
   std::cout << "[INFO] Création du jeu..." << std::endl;
+  Game * robs = new Game();
+  sf::RenderWindow * robsWindow = robs->getWindow();
+  GameLogic * robsBrain = robs->getBrain();
 
   /// Police
   sf::Font myFont;
   if (!myFont.loadFromFile("assets/RetroGaming.ttf")) {
-    std::cout << "[ERR] Police d'écriture illisible."<< std::endl;
+    std::cout << "[ERR] Police d'écriture illisible." << std::endl;
   }
-  else { std::cout << "[INFO] Police d'écriture initialisée!"  << std::endl; }
+  else { std::cout << "[INFO] Police d'écriture initialisée!" << std::endl; }
 
   /// Textures
-  sf::Texture bgimg_tex; bgimg_tex.loadFromFile("assets/bg.png");
-  sf::Texture map01_tex; map01_tex.loadFromFile("assets/map01.png");
-  sf::Texture map02_tex; map02_tex.loadFromFile("assets/map02.png");
-  sf::Texture robslogo_tex; robslogo_tex.loadFromFile("assets/robs.png");
-  sf::Texture introOne_tex; introOne_tex.loadFromFile("assets/kartemer.png");
-  sf::Texture introTwo_tex; introTwo_tex.loadFromFile("assets/battle.png");
+  sf::Texture * bgimg_tex; bgimg_tex->loadFromFile("assets/bg.png");
+  sf::Texture * map01_tex; map01_tex->loadFromFile("assets/map01.png");
+  sf::Texture * map02_tex; map02_tex->loadFromFile("assets/map02.png");
+  sf::Texture * robslogo_tex; robslogo_tex->loadFromFile("assets/robs.png");
+  sf::Texture * introOne_tex; introOne_tex->loadFromFile("assets/kartemer.png");
+  sf::Texture * introTwo_tex; introTwo_tex->loadFromFile("assets/battle.png");
   std::cout << "[INFO] Textures chargées! " << std::endl;
 
   // Main Menu
   /// Initialisation
   //// Background
-  sf::Sprite * bgSprite = spriteFromTexture(&bgimg_tex, false, 1);
-  robs->setBackground(bgSprite);
   std::cout << "[INFO] Mise à jour du fond..." << std::endl;
+  sf::Sprite * bgSprite = spriteFromTexture(bgimg_tex, false, 1);
+  robs->setBackground(bgSprite);
 
   //// Logo
-  sf::Sprite * robsLogo = spriteFromTexture(&robslogo_tex, true, 1);
+  std::cout << "[INFO] Ajout du logo..." << std::endl;
+  sf::Sprite * robsLogo = spriteFromTexture(robslogo_tex, true, 1);
   robsLogo->setPosition(1280/2, 720*0.3);
   robs->addElement(robsLogo);
-  std::cout << "[INFO] Ajout du logo..." << std::endl;
+
 
   //// Btn "Jouer"
+  std::cout << "[INFO] Création de l'interface 1/3..." << std::endl;
   std::vector<sf::Sprite *> * mapSelImgs = new std::vector<sf::Sprite *>;
   std::vector<GUIElement *> * mapSelBtns = new std::vector<GUIElement *>;
   ChangeMenu * toMapSel = new ChangeMenu(robs, mapSelBtns, mapSelImgs);
   Button * btnToMapSel = new Button(sf::Vector2f(1280/2 - 230, 720*0.75), sf::Vector2f(460, 50), "Jouer!", myFont, toMapSel);
   robs->addGUIElement(btnToMapSel);
-  std::cout << "[INFO] Création de l'interface 1/3..." << std::endl;
+
 
   // Map Selection
   /// Btns chgt map
+  std::cout << "[INFO] Création de l'interface 2/3..."<< std::endl;
   SetMap * changeToMapone = new SetMap(robs, "assets/map01.png");
   SetMap * changeToMaptwo = new SetMap(robs, "assets/map02.png");
   LaunchGame * toGame = new LaunchGame(robs);
@@ -70,16 +77,15 @@ int main() {
   mapSelBtns->push_back(btnSelMapone);
   mapSelBtns->push_back(btnSelMaptwo);
   mapSelBtns->push_back(btnToGame);
-  std::cout << "[INFO] Création de l'interface 2/3..."<< std::endl;
 
   // Affichage maps
-  sf::Sprite * mapone = spriteFromTexture(&map01_tex, true, 0.36);
-  sf::Sprite * maptwo = spriteFromTexture(&map02_tex, true, 0.36);
+  std::cout << "[INFO] Création de l'interface 3/3..." << std::endl;
+  sf::Sprite * mapone = spriteFromTexture(map01_tex, true, 0.36);
+  sf::Sprite * maptwo = spriteFromTexture(map02_tex, true, 0.36);
   mapone->setPosition(1280*0.3, 720*0.4);
   maptwo->setPosition(1280*0.7, 720*0.4);
   mapSelImgs->push_back(mapone);
   mapSelImgs->push_back(maptwo);
-  std::cout << "[INFO] Création de l'interface 3/3..." << std::endl;
 
   // Intro
   /// Initialisation
@@ -89,44 +95,42 @@ int main() {
 
   sf::Event introEvents;
   sf::Clock introClock;
-  bool introIsPlaying = true; // [SKIP] ici pour passer l'intro
-  bool guiIsDisplayed = false;
 
-  sf::Sprite * introOne = spriteFromTexture(&introOne_tex, false, 1);
-  sf::Sprite * introTwo = spriteFromTexture(&introTwo_tex, false, 1);
+  sf::Sprite * introOne = spriteFromTexture(introOne_tex, false, 1);
+  sf::Sprite * introTwo = spriteFromTexture(introTwo_tex, false, 1);
 
+  std::cout << "[INFO] Démarrage de la musique..." << std::endl;
   sf::Music music;
   if (!music.openFromFile("assets/ost.ogg"))
     return -1; // error
   music.play();
-  std::cout << "[INFO] Démarrage de la musique..." << std::endl;
 
   while (introIsPlaying) {
     // get_close
-    if (window->pollEvent(introEvents) && introEvents.type == sf::Event::Closed) {
-      window->close();
+    if (robsWindow->pollEvent(introEvents) && introEvents.type == sf::Event::Closed) {
+      robsWindow->close();
       music.stop();
       introIsPlaying = false;
     }
 
     // lore_img1
     if (introClock.getElapsedTime() < sf::milliseconds(200)) {
-      window->draw(*introOne);
-      window->display();
+      robsWindow->draw(*introOne);
+      robsWindow->display();
     }
 
     // lore_img2
     if (introClock.getElapsedTime() > sf::milliseconds(8000)) {
-      window->draw(*introTwo);
-      window->display();
+      robsWindow->draw(*introTwo);
+      robsWindow->display();
     }
 
     // fade_to_white
     if (introClock.getElapsedTime() > sf::milliseconds(16000)) {
       for (int i = 0; i < 256; i++){
         introRect.setFillColor(sf::Color(255, 255, 255, i));
-        window->draw(introRect);
-        window->display();
+        robsWindow->draw(introRect);
+        robsWindow->display();
         sf::sleep(sf::milliseconds(12));
       }
       introIsPlaying = false;
@@ -134,35 +138,28 @@ int main() {
   }
 
   // Menu principal
-  guiIsDisplayed = true;
-  window->clear();
-
-  while (guiIsDisplayed) {
-    // get_close
-    if (robs->getInGameStatus() == true || robs->brain->getFSM() == 99) {
+  while (robsBrain->getFSM() == 0) {
+    // contrôle de la musique hors de la classe Game
+    if (robs->getInGameStatus() == true || robsBrain->getFSM() == 99) {
       music.stop();
-      guiIsDisplayed = false;
     }
 
-    robs->brain->eventMgr(window, sf::Mouse::getPosition(*window));
+    robsBrain->eventMgr(robs, sf::Mouse::getPosition(*(robsWindow)));
     robs->update();
   }
 
   // Boucle de jeu
-  while (robs->getInGameStatus() == true) {
-    if (robs->brain->getFSM() == 99) {
-      robs->setInGameStatus(false);
-    }
-
-    // Et ici on enjoy toute la logique de jeu lol
-    // 1. si on est en début de jeu, placer les Robs
-    // 2. gérer les tours
-    // bref, voila, tout ça à faire dans Game soon
-
-    robs->brain->eventMgr(window, sf::Mouse::getPosition(*window));
+  while (robsBrain->getFSM() != 99) {
+    robsBrain->eventMgr(robs, sf::Mouse::getPosition(*(robsWindow)));
     robs->update();
   }
 
   // Destructeurs (parce qu'on utilise pas encore de smart pointers)
   delete robs;
+  delete bgimg_tex;
+  delete map01_tex;
+  delete map02_tex;
+  delete robslogo_tex;
+  delete introOne_tex;
+  delete introTwo_tex;
 }

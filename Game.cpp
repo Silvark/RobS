@@ -1,9 +1,9 @@
 #include "Game.hpp"
 
-Game::Game(sf::RenderWindow * wdw, GameLogic * brn) {
-  window = wdw;
+Game::Game() {
+  window = new sf::RenderWindow(sf::VideoMode(1280, 720), "RobS");
+  brain = new GameLogic();
   inGame = false;
-  brain = brn;
 }
 
 Game::~Game() {
@@ -13,6 +13,7 @@ Game::~Game() {
 
   delete terrain;
   delete bgimg;
+  delete brain;
   window->close();
 }
 
