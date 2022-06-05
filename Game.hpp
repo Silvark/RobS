@@ -49,6 +49,7 @@ class Game {
     bool const getInGameStatus() { return inGame; }
     sf::RenderWindow * const getWindow() { return window; }
     GameLogic * const getBrain() { return brain; }
+    Map * const getMap() { return terrain; }
 };
 
 #endif

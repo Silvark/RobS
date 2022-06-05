@@ -43,6 +43,10 @@ void Game::update() {
     window->draw(*elt, sf::RenderStates::Default);
   }
 
+  for (auto elt : entities) {
+    window->draw(*elt, sf::RenderStates::Default);
+  }
+
   for (auto elt : elements) {
     window->draw(*elt, sf::RenderStates::Default);
   }

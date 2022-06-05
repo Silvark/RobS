@@ -38,7 +38,7 @@ class GameLogic {
 
     int const getFSM();
 
-    Rob * placeRob(sf::Vector2f position, Player * owner);
+    void placeRob(sf::Vector2f position, Game * game, Player * owner);
 
 };
 

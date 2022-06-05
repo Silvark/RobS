@@ -34,13 +34,15 @@ class SetMap : public Command {
 
   public:
     SetMap(Game * istc, std::string path);
-
     void execute();
 };
 
 class LaunchGame : public Command {
+  private:
+    sf::Sprite * background;
+
   public:
-    LaunchGame(Game * istc);
+    LaunchGame(Game * istc, sf::Sprite * bg);
     void execute();
 };
 

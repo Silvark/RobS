@@ -2,8 +2,8 @@ CC = g++
 CFLAGS = -Wall
 LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-OBJ = Commands.o Entity.o Player.o Weapons.o GUIElements.o Map.o Game.o GameLogic.o
-HEAD = Commands.hpp Entity.hpp Player.hpp Weapons.hpp GUIElements.hpp Map.hpp Game.hpp GameLogic.hpp
+OBJ = Commands.o Entity.o Rob.o Player.o Weapons.o GUIElements.o Map.o Game.o GameLogic.o
+HEAD = Commands.hpp Entity.hpp Rob.hpp Player.hpp Weapons.hpp GUIElements.hpp Map.hpp Game.hpp GameLogic.hpp
 
 all: main clean
 

@@ -32,12 +32,14 @@ void SetMap::execute() {
   std::cout << "[INFO] Map changée! (" << pathToMap << ")" << std::endl;
 }
 
-LaunchGame::LaunchGame(Game * istc) {
+LaunchGame::LaunchGame(Game * istc, sf::Sprite * bg) {
   game = istc;
+  background = bg;
 }
 
 void LaunchGame::execute() {
   game->setInGameStatus(true);
+  game->setBackground(background);
   game->removeGUIElements();
   game->removeElements();
 }

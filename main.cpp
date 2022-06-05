@@ -34,12 +34,13 @@ int main() {
   else { std::cout << "[INFO] Police d'écriture initialisée!" << std::endl; }
 
   /// Textures
-  sf::Texture * bgimg_tex; bgimg_tex->loadFromFile("assets/bg.png");
-  sf::Texture * map01_tex; map01_tex->loadFromFile("assets/map01.png");
-  sf::Texture * map02_tex; map02_tex->loadFromFile("assets/map02.png");
-  sf::Texture * robslogo_tex; robslogo_tex->loadFromFile("assets/robs.png");
-  sf::Texture * introOne_tex; introOne_tex->loadFromFile("assets/kartemer.png");
-  sf::Texture * introTwo_tex; introTwo_tex->loadFromFile("assets/battle.png");
+  sf::Texture * bgimg_tex = new sf::Texture(); bgimg_tex->loadFromFile("assets/bg.png");
+  sf::Texture * map01_tex = new sf::Texture(); map01_tex->loadFromFile("assets/map01.png");
+  sf::Texture * map02_tex = new sf::Texture(); map02_tex->loadFromFile("assets/map02.png");
+  sf::Texture * robslogo_tex = new sf::Texture(); robslogo_tex->loadFromFile("assets/robs.png");
+  sf::Texture * introOne_tex = new sf::Texture(); introOne_tex->loadFromFile("assets/kartemer.png");
+  sf::Texture * introTwo_tex = new sf::Texture(); introTwo_tex->loadFromFile("assets/battle.png");
+  sf::Texture * gameBg_tex = new sf::Texture(); gameBg_tex->loadFromFile("assets/bg2.png");
   std::cout << "[INFO] Textures chargées! " << std::endl;
 
   // Main Menu
@@ -70,7 +71,8 @@ int main() {
   std::cout << "[INFO] Création de l'interface 2/3..."<< std::endl;
   SetMap * changeToMapone = new SetMap(robs, "assets/map01.png");
   SetMap * changeToMaptwo = new SetMap(robs, "assets/map02.png");
-  LaunchGame * toGame = new LaunchGame(robs);
+  sf::Sprite * gameBg = spriteFromTexture(gameBg_tex, false, 1);
+  LaunchGame * toGame = new LaunchGame(robs, gameBg);
   Button * btnSelMapone = new Button(sf::Vector2f(1280*0.12, 720*0.6), sf::Vector2f(460, 50), "Minecraft Cave", myFont, changeToMapone);
   Button * btnSelMaptwo = new Button(sf::Vector2f(1280*0.52, 720*0.6), sf::Vector2f(460, 50), "King of the Hill", myFont, changeToMaptwo);
   Button * btnToGame = new Button(sf::Vector2f(1280/2 - 260, 720*0.75), sf::Vector2f(540, 50), "Jouer!", myFont, toGame);
@@ -94,7 +96,7 @@ int main() {
   introRect.setPosition(0, 0);
 
   sf::Event introEvents;
-  sf::Clock introClock;
+  sf::Clock gameClock;
 
   sf::Sprite * introOne = spriteFromTexture(introOne_tex, false, 1);
   sf::Sprite * introTwo = spriteFromTexture(introTwo_tex, false, 1);
@@ -114,19 +116,19 @@ int main() {
     }
 
     // lore_img1
-    if (introClock.getElapsedTime() < sf::milliseconds(200)) {
+    if (gameClock.getElapsedTime() < sf::milliseconds(200)) {
       robsWindow->draw(*introOne);
       robsWindow->display();
     }
 
     // lore_img2
-    if (introClock.getElapsedTime() > sf::milliseconds(8000)) {
+    if (gameClock.getElapsedTime() > sf::milliseconds(8000)) {
       robsWindow->draw(*introTwo);
       robsWindow->display();
     }
 
     // fade_to_white
-    if (introClock.getElapsedTime() > sf::milliseconds(16000)) {
+    if (gameClock.getElapsedTime() > sf::milliseconds(16000)) {
       for (int i = 0; i < 256; i++){
         introRect.setFillColor(sf::Color(255, 255, 255, i));
         robsWindow->draw(introRect);
@@ -137,21 +139,20 @@ int main() {
     }
   }
 
-  // Menu principal
-  while (robsBrain->getFSM() == 0) {
-    // contrôle de la musique hors de la classe Game
-    if (robs->getInGameStatus() == true || robsBrain->getFSM() == 99) {
+  // Le jeu
+  while (robsBrain->getFSM() != 99) {
+    gameClock.restart();
+    if (robsBrain->getFSM() != 0 && !introIsPlaying) {
+      std::cout << "[INFO] Arrêt de la musique" << std::endl;
       music.stop();
+      introIsPlaying = true; // recyclage du booléen
     }
 
     robsBrain->eventMgr(robs, sf::Mouse::getPosition(*(robsWindow)));
     robs->update();
-  }
 
-  // Boucle de jeu
-  while (robsBrain->getFSM() != 99) {
-    robsBrain->eventMgr(robs, sf::Mouse::getPosition(*(robsWindow)));
-    robs->update();
+    // majoration des fps
+    sf::sleep(sf::seconds(1/60) - gameClock.getElapsedTime());
   }
 
   // Destructeurs (parce qu'on utilise pas encore de smart pointers)
@@ -162,4 +163,5 @@ int main() {
   delete robslogo_tex;
   delete introOne_tex;
   delete introTwo_tex;
+  delete gameBg_tex;
 }

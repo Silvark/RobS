@@ -15,6 +15,13 @@ Map::Map(std::string input_file) {
   updateMap(0, 0, size.x, size.y);
 }
 
+size_t Map::coordsToPix(int x, int y) const {
+  if (y < 0 || x < 0 || x > size.x || y > size.y) {
+    throw std::invalid_argument( "[ERROR] Accès terrain invalide" );
+  }
+  return y * size.x + x;
+}
+
 void Map::setPixel(int x, int y, int value) {
   collide_map[coordsToPix(x, y)] = value;
   if (value) {
