@@ -1,5 +1,5 @@
-#include "GameLogic.hpp"
-#include "Game.hpp"
+#include "headers/GameLogic.hpp"
+#include "headers/Game.hpp"
 
 GameLogic::GameLogic() {
   one = new Player(1);
@@ -22,7 +22,6 @@ Rob * const GameLogic::getControlTarget() const {
 
 void GameLogic::placeRob(sf::Vector2f position, Game * game, Player * owner) {
   if (owner->getActionCooldown() < sf::seconds(0.5)) {
-    std::cout << "[WARN] Vous cliquez trop vite! On est pas en UHC!" << std::endl;
     return;
   }
 
@@ -38,7 +37,7 @@ void GameLogic::placeRob(sf::Vector2f position, Game * game, Player * owner) {
       }
     }
   }
-  catch( const std::invalid_argument& except ) {
+  catch (const std::invalid_argument& except) {
     // bord de map
     validPlacement = false;
   }
@@ -92,11 +91,12 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
       break;
 
     case 1: // début de partie
-      // MaJ GUI [placement de robs]
+      // MaJ GUI [placement de robs] (pas de GUI)
       std::cout << "[INFO] Partie lancée!" << std::endl;
       std::cout << "[INFO] Joueur 1, placez vos RobS!" << std::endl;
 
-      // indiquer qu'il faut placer des joueurs
+      // TODO : indiquer qu'il faut placer des joueurs
+      // le terminal fait l'affaire, en vrai
 
       fsm = 11;
       break;
@@ -131,8 +131,12 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
 
     case 2: // partie en cours
       // MaJ GUI [combat]
+      {
+      Inventory * inv = new Inventory(sf::Vector2f((1280/2)-200, 0), one);
       game->removeGUIElements();
-
+      game->addGUIElement(inv);
+      fsm = 21;
+      }
       break;
 
     case 21: // j1 joue
@@ -162,4 +166,8 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
       break;
   }
   return;
+}
+
+void GameLogic::physicsMgr(Game * game) {
+
 }

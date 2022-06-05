@@ -1,4 +1,4 @@
-#include "GUIElements.hpp"
+#include "headers/GUIElements.hpp"
 
 Button::Button(sf::Vector2f pos, sf::Vector2f sz,
                std::string txt, sf::Font& font, Command* act)
@@ -64,4 +64,67 @@ void Button::onClick() {
 void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
   target.draw(element, states);
   target.draw(desc, states);
+}
+
+
+Inventory::Inventory(sf::Vector2f pos, Player * o) {
+  position = pos;
+  owner = o;
+
+  overlay_tex = new sf::Texture();
+  overlay_tex->loadFromFile("assets/invoverlay.png");
+  overlay = new sf::Sprite();
+  overlay->setTexture(*overlay_tex);
+  overlay->setPosition(position);
+  
+  frame = sf::RectangleShape(sf::Vector2f(60, 60));
+  frame.setFillColor(sf::Color(0, 0, 0, 0));
+  frame.setOutlineColor(sf::Color(255, 0, 0, 255));
+  frame.setOutlineThickness(5);
+}
+
+Inventory::~Inventory() {
+  delete overlay;
+  delete overlay_tex;
+}
+
+void Inventory::onClick() {
+  // implémenter chgt d'arme lors du clic?
+}
+
+void Inventory::hoveredStatus(const sf::Vector2i& mousePos) {
+  if (mousePos.y >= position.y + 18 && mousePos.y <= position.y + 77) {
+    // mesures prises à la main
+    if (mousePos.x >= position.x + 18 && mousePos.x <= position.x + 77) {
+      // bombe
+      hovered = true;
+      hoveredSlot = 1;
+      frame.setPosition(sf::Vector2f(position.x + 18, position.y + 18));
+      return;
+    }
+
+    if (mousePos.x >= position.x + 95 && mousePos.x <= position.x + 154) {
+      // deagle
+      hovered = true;
+      hoveredSlot = 2;
+      frame.setPosition(sf::Vector2f(position.x + 95, position.y + 18));
+      return;
+    }
+
+    if (mousePos.x >= position.x + 172 && mousePos.x <= position.x + 231) {
+      // mine
+      hovered = true;
+      hoveredSlot = 3;
+      frame.setPosition(sf::Vector2f(position.x + 172, position.y + 18));
+      return;
+    }
+  }
+  hovered = false;
+}
+
+void Inventory::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+  target.draw(*overlay, states);
+  if (hovered) {
+    target.draw(frame, states);
+  }
 }

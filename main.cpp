@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <SFML/Audio.hpp>
 
-#include "Game.hpp"
+#include "headers/Game.hpp"
 
 sf::Sprite * spriteFromTexture(sf::Texture * texture, bool setOriginToMiddle, float scale) {
   sf::Sprite * sprite = new sf::Sprite();
@@ -149,10 +149,13 @@ int main() {
     }
 
     robsBrain->eventMgr(robs, sf::Mouse::getPosition(*(robsWindow)));
+    robsBrain->physicsMgr(robs);
     robs->update();
 
     // majoration des fps
-    sf::sleep(sf::seconds(1/60) - gameClock.getElapsedTime());
+    if (sf::seconds(1/60) - gameClock.getElapsedTime() > sf::seconds(0)) {
+      sf::sleep(sf::seconds(1/60) - gameClock.getElapsedTime());
+    }
   }
 
   // Destructeurs (parce qu'on utilise pas encore de smart pointers)

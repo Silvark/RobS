@@ -1,4 +1,4 @@
-#include "Player.hpp"
+#include "headers/Player.hpp"
 
 Player::Player(int i) {
   id = i;

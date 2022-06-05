@@ -1,6 +1,6 @@
-#include "Game.hpp"
-#include "GUIElements.hpp"
-#include "Commands.hpp"
+#include "headers/Game.hpp"
+#include "headers/GUIElements.hpp"
+#include "headers/Commands.hpp"
 
 ChangeMenu::ChangeMenu(Game * istc, std::vector<GUIElement *> * gelts, std::vector<sf::Sprite *> * elts) {
   game = istc;

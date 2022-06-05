@@ -2,6 +2,7 @@
 #define LGK_HPP
 
 #include "Player.hpp"
+#include "GUIElements.hpp"
 class Game;
 
 class GameLogic {
@@ -32,6 +33,7 @@ class GameLogic {
     ~GameLogic();
 
     void eventMgr(Game * game, const sf::Vector2i& mousePos);
+    void physicsMgr(Game * game);
 
     void setControlTarget(Rob * playable);
     Rob * const getControlTarget() const;

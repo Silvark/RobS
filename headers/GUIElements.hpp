@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Commands.hpp"
+#include "Player.hpp"
 
 class GUIElement : public sf::Drawable {
   private:
@@ -47,6 +48,23 @@ class Button : public GUIElement {
     void hoveredStatus(const sf::Vector2i& mousePos);
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+};
+
+class Inventory : public GUIElement {
+  private:
+    sf::Texture * overlay_tex;
+    sf::Sprite * overlay;
+    sf::RectangleShape frame;
+    Player * owner;
+    int hoveredSlot;
+
+  public:
+    Inventory(sf::Vector2f pos, Player * o);
+    ~Inventory();
+
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void onClick();
+    void hoveredStatus(const sf::Vector2i& mousePos);
 };
 
 #endif

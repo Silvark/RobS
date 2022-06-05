@@ -10,7 +10,7 @@ all: main clean
 main: main.o $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-%.o: %.cpp $(HEAD)
+%.o: %.cpp headers/$(HEAD)
 	$(CC) $(CFLAGS) $< -c
 
 .PHONY: clean
