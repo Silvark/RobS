@@ -1,8 +1,10 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <vector>
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include <iostream>
+#include <cmath>
 
 class Map : public sf::Drawable { // permet d'avoir un objet customisé et pouvant être dessiné
   private:

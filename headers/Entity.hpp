@@ -10,11 +10,17 @@ class Entity : public sf::Drawable {
     sf::Texture * texture;
     sf::Sprite * sprite;
 
+    sf::Shape * hitbox;
+
+    bool alive;
+
   public:
     Entity();
     ~Entity();
 
-    virtual void move() =0;
+    bool const isAlive() const { return alive; }
+
+    virtual void move(Game * game) =0;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const =0;
 };
 

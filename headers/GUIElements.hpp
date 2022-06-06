@@ -1,8 +1,8 @@
 #ifndef GEL_HPP
 #define GEL_HPP
 
-#include <SFML/Graphics.hpp>
 #include <iostream>
+#include <SFML/Graphics.hpp>
 
 #include "Commands.hpp"
 #include "Player.hpp"
@@ -55,12 +55,15 @@ class Inventory : public GUIElement {
     sf::Texture * overlay_tex;
     sf::Sprite * overlay;
     sf::RectangleShape frame;
+    sf::RectangleShape selected;
     Player * owner;
     int hoveredSlot;
 
   public:
     Inventory(sf::Vector2f pos, Player * o);
     ~Inventory();
+
+    void updateSelected();
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void onClick();

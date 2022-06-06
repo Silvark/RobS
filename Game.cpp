@@ -39,15 +39,15 @@ void Game::update() {
     // }
   }
 
-  for (auto elt : gui) {
-    window->draw(*elt, sf::RenderStates::Default);
-  }
-
   for (auto elt : entities) {
     window->draw(*elt, sf::RenderStates::Default);
   }
 
   for (auto elt : elements) {
+    window->draw(*elt, sf::RenderStates::Default);
+  }
+
+  for (auto elt : gui) {
     window->draw(*elt, sf::RenderStates::Default);
   }
 
@@ -82,7 +82,7 @@ void Game::removeEntities() { entities.clear(); }
 void Game::cleanEntities() {
   int i = 0;
   for (auto elt : entities) {
-    if (false) { // /!\ CHECK VIE ENTITE
+    if (!elt->isAlive()) { // /!\ CHECK VIE ENTITE
       delete elt;
       entities.erase(entities.begin() + i);
     }

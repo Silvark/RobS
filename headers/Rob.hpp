@@ -13,6 +13,9 @@ class Rob : public Entity {
 
     bool isControlled;
 
+    sf::Texture * selectorTexture;
+    sf::Sprite * selectorSprite;
+
   public:
     Rob(sf::Vector2f pos, sf::Vector2f vel, int type);
     ~Rob();
@@ -26,7 +29,10 @@ class Rob : public Entity {
     sf::Vector2f calculateAimVector(sf::Vector2i& mousePos);
     float calculateStrength(sf::Vector2i& mousePos);
 
-    void move();
+    void setControlledStatus(bool value) { isControlled = value; }
+    bool const getControlledStatus() { return isControlled; }
+
+    void move(Game * game);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 

@@ -26,12 +26,15 @@ class Player {
     Rob * getControlledRob() { return controlledRob; }
     WeaponItem * getSelectedWeapon() { return selectedWeapon; }
     int const getNPlayable() const { return squad.size(); }
-
-    void addEntity(Rob * ety);
     int const getId() { return id; }
-
+    int const getSelectedWeaponIndex() { return selectedWeaponIndex; }
     sf::Time const getActionCooldown() { return actionCooldown.getElapsedTime(); }
     sf::Time const getTurnClock() { return turnClock.getElapsedTime(); }
+
+    void addEntity(Rob * ety);
+    void setSelectedWeapon(int value) { selectedWeaponIndex = value; selectedWeapon = arsenal[selectedWeaponIndex]; }
+    void nextControlledRob();
+    void prevControlledRob();
 
     void resetActionCooldown() { actionCooldown.restart(); }
     void resetTurnClock() { turnClock.restart(); }

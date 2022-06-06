@@ -1,6 +1,7 @@
 #ifndef CMD_HPP
 #define CMD_HPP
 
+#include <SFML/Graphics.hpp>
 #include <iostream>
 
 class Game;

@@ -12,6 +12,7 @@ Button::Button(sf::Vector2f pos, sf::Vector2f sz,
 
   // text
   desc = sf::Text();
+
   desc.setString(txt);
   desc.setFont(font);
   sf::FloatRect textBounds = desc.getLocalBounds();
@@ -76,11 +77,14 @@ Inventory::Inventory(sf::Vector2f pos, Player * o) {
   overlay = new sf::Sprite();
   overlay->setTexture(*overlay_tex);
   overlay->setPosition(position);
-  
+
   frame = sf::RectangleShape(sf::Vector2f(60, 60));
   frame.setFillColor(sf::Color(0, 0, 0, 0));
   frame.setOutlineColor(sf::Color(255, 0, 0, 255));
   frame.setOutlineThickness(5);
+
+  selected = sf::RectangleShape(sf::Vector2f(60, 60));
+  selected.setFillColor(sf::Color(255, 0, 0, 64));
 }
 
 Inventory::~Inventory() {
@@ -93,6 +97,7 @@ void Inventory::onClick() {
 }
 
 void Inventory::hoveredStatus(const sf::Vector2i& mousePos) {
+  updateSelected();
   if (mousePos.y >= position.y + 18 && mousePos.y <= position.y + 77) {
     // mesures prises à la main
     if (mousePos.x >= position.x + 18 && mousePos.x <= position.x + 77) {
@@ -122,8 +127,29 @@ void Inventory::hoveredStatus(const sf::Vector2i& mousePos) {
   hovered = false;
 }
 
+void Inventory::updateSelected() {
+  switch (owner->getSelectedWeaponIndex()) {
+    case -1:
+      selected.setFillColor(sf::Color(255, 0, 0, 0));
+      break;
+    case 0:
+      selected.setFillColor(sf::Color(255, 0, 0, 64));
+      selected.setPosition(sf::Vector2f(position.x + 18, position.y + 18));
+      break;
+    case 1:
+      selected.setFillColor(sf::Color(255, 0, 0, 64));
+      selected.setPosition(sf::Vector2f(position.x + 95, position.y + 18));
+      break;
+    case 2:
+      selected.setFillColor(sf::Color(255, 0, 0, 64));
+      selected.setPosition(sf::Vector2f(position.x + 172, position.y + 18));
+      break;
+  }
+}
+
 void Inventory::draw(sf::RenderTarget& target, sf::RenderStates states) const {
   target.draw(*overlay, states);
+  target.draw(selected, states);
   if (hovered) {
     target.draw(frame, states);
   }

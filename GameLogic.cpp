@@ -1,5 +1,5 @@
-#include "headers/GameLogic.hpp"
 #include "headers/Game.hpp"
+#include "headers/GameLogic.hpp"
 
 GameLogic::GameLogic() {
   one = new Player(1);
@@ -20,8 +20,20 @@ Rob * const GameLogic::getControlTarget() const {
   return controlTarget;
 }
 
+void GameLogic::changeWeapon(Player * player) {
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
+    player->setSelectedWeapon(0);
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
+    player->setSelectedWeapon(1);
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) {
+    player->setSelectedWeapon(2);
+  }
+}
+
 void GameLogic::placeRob(sf::Vector2f position, Game * game, Player * owner) {
-  if (owner->getActionCooldown() < sf::seconds(0.5)) {
+  if (owner->getActionCooldown() < sf::seconds(0.3)) {
     return;
   }
 
@@ -141,11 +153,13 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
 
     case 21: // j1 joue
       // case 21 tant que one n'a pas joué et peut encore jouer (tour de 25s)
+      changeWeapon(one); // regarde si on change d'arme et agit en csq
 
       break;
 
     case 22: // j2 joue
       // case 22 tant que one n'a pas joué et peut encore jouer (tour de 25s)
+      changeWeapon(two); // regarde si on change d'arme et agit en csq
 
       break;
 
@@ -169,5 +183,9 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
 }
 
 void GameLogic::physicsMgr(Game * game) {
+  std::vector<Entity *> entities = game->getEntities();
+  for (auto elt : entities) {
+    (*elt)->move(game);
+  }
 
 }

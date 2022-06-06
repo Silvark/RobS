@@ -1,11 +1,12 @@
 #ifndef GAM_HPP
 #define GAM_HPP
 
+#include <SFML/Graphics.hpp>
+
 #include "Map.hpp"
-#include "Player.hpp"
-#include "Weapons.hpp"
-#include "GUIElements.hpp"
 #include "GameLogic.hpp"
+#include "Entity.hpp"
+#include "GUIElements.hpp"
 
 class Game {
   private:

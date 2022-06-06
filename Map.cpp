@@ -1,6 +1,4 @@
 #include "headers/Map.hpp"
-#include <iostream>
-#include <cmath>
 
 Map::Map(std::string input_file) {
   if (map.loadFromFile(input_file) == false) {
