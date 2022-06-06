@@ -1,6 +1,9 @@
+#include "headers/Game.hpp"
+#include "headers/Player.hpp"
 #include "headers/Weapons.hpp"
 
 Weapon::Weapon() {
+  alive = true;
   position = sf::Vector2f(0, 0);
   velocity = sf::Vector2f(0, 0);
 
@@ -18,26 +21,63 @@ Weapon::Weapon(sf::Vector2f pos, sf::Vector2f vel) {
   sprite->setPosition(position);
 }
 
+void Weapon::onCollision(Game * game) {
+  explode(game);
+  alive = false;
+}
+
 void Weapon::move(Game * game) {
   Map * terrain = game->getMap();
-  if (position.x > terrain->getSize().x + 50 || position.y > terrain->getSize().y + 50
-   || position.x < -50 || position.y < -50) {
-    // out of bounds
-    alive = false;
+  bool collides;
+
+  sf::Vector2f initialPosition = this->getPosition();
+  sf::Vector2f finalPosition;
+  sf::Vector2f displacement;
+  sf::FloatRect midpoint = sprite->getLocalBounds();
+
+  initialPosition.x += midpoint.width/2;
+  initialPosition.y += midpoint.height/2;
+
+  finalPosition.x = initialPosition.x + velocity.x;
+  finalPosition.y = initialPosition.y + velocity.y;
+
+  displacement.x = finalPosition.x - initialPosition.x;
+  displacement.y = finalPosition.y - initialPosition.y;
+
+  sf::Vector2f intermediatePosition;
+  float resolution = 0.05;
+
+  for (float increment = 0; increment < 1; increment = increment + resolution) {
+    intermediatePosition.x = initialPosition.x + displacement.x * increment;
+    intermediatePosition.y = initialPosition.y + displacement.y * increment;
+
+    try {
+    collides = terrain->getPixel(floor(intermediatePosition.x), floor(intermediatePosition.y))
+    && terrain->getPixel(ceil(intermediatePosition.x), ceil(intermediatePosition.y));
+    }
+    catch (const std::invalid_argument& except) {
+      // oob
+      collides = false;
+      alive = false;
+      return;
+    }
+
+    if (collides) {
+      intermediatePosition.x -= midpoint.width/2;
+      intermediatePosition.y -= midpoint.height/2;
+      this->setPosition(intermediatePosition);
+      onCollision(game);
+      return;
+    }
   }
-
-  float gravity = (mass * -9.81);
-  sf::Vector2f finalPosition(position.x + (velocity.x * (1/60)), position.y + (velocity.y * (1/60)) + gravity);
-
-  sf::Vector2f displacement(finalPosition.x - position.x, finalPosition.y - position.y);
-  for (int increment = 0; increment < 100; increment + RESOLUTION) {
-    
-  }
-
-
+  finalPosition.x -= midpoint.width/2;
+  finalPosition.y -= midpoint.height/2;
+  this->setPosition(finalPosition);
+  return;
 }
 
 void Weapon::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+  sprite->setPosition(position.x, position.y);
   target.draw(*sprite, states);
 }
 
@@ -49,8 +89,11 @@ Bomb::Bomb(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
-  blastRadius = 50;
-  mass = 0.1;
+  mass = 20;
+  velocity.x = velocity.x / mass;
+  velocity.y = velocity.y / mass;
+
+  blastRadius = 20;
   nBounces = 0;
 
   texture->loadFromFile("assets/bomb.png");
@@ -58,7 +101,7 @@ Bomb::Bomb(sf::Vector2f pos, sf::Vector2f vel) {
   sprite->setPosition(position);
   sprite->setScale(1/2, 1/2);
 
-  hitbox = new sf::CircleShape(30);
+  hitbox = new sf::CircleShape(15);
   hitbox->setPosition(position);
 }
 Bomb::~Bomb() {}
@@ -67,8 +110,11 @@ Deagle::Deagle(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
+  mass = 5;
+  velocity.x = velocity.x / mass;
+  velocity.y = velocity.y / mass;
+
   blastRadius = 10;
-  mass = 1;
   nBounces = 0;
 
   texture->loadFromFile("assets/deagle.png");
@@ -76,7 +122,7 @@ Deagle::Deagle(sf::Vector2f pos, sf::Vector2f vel) {
   sprite->setPosition(position);
   sprite->setScale(1/6, 1/6);
 
-  hitbox = new sf::CircleShape(10);
+  hitbox = new sf::CircleShape(5);
   hitbox->setPosition(position);
 }
 Deagle::~Deagle() {}
@@ -85,8 +131,11 @@ Mine::Mine(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
-  blastRadius = 20;
-  mass = 1;
+  mass = 40;
+  velocity.x = velocity.x / mass;
+  velocity.y = -velocity.y / mass; // le sol est vers les +, le ciel vers les -
+
+  blastRadius = 50;
   nBounces = 0;
 
   texture->loadFromFile("assets/mine.png");
@@ -94,7 +143,8 @@ Mine::Mine(sf::Vector2f pos, sf::Vector2f vel) {
   sprite->setPosition(position);
   sprite->setScale(1/3, 1/3);
 
-  hitbox = new sf::RectangleShape(sprite->getGlobalBounds());
+  hitbox = new sf::RectangleShape(sf::Vector2f(sprite->getGlobalBounds().width, sprite->getGlobalBounds().height));
+  hitbox->setPosition(sf::Vector2f(sprite->getGlobalBounds().left, sprite->getGlobalBounds().top));
 }
 Mine::~Mine() {}
 
@@ -103,13 +153,32 @@ WeaponItem::WeaponItem(int c, int p) {
   payload = p;
 }
 
-void WeaponItem::generateWeapon(Game * game) {
-  switch (payload) {
-    case 0: // bombe
-      break;
-    case 1: // deagle
-      break;
-    case 2: // mine
-      break;
+Weapon * WeaponItem::generateWeapon(Game * game, Player * player) {
+  Rob * rob = player->getControlledRob();
+  sf::Vector2f pos = rob->getPosition();
+  pos.x = rob->getAimVector().x * 3;
+  pos.y = rob->getAimVector().y * 3;
+  sf::Vector2f vel(rob->getStrength(), rob->getStrength());
+  Weapon * current = nullptr;
+
+  if (payload == 0) {
+    std::cout << "[WARN] Pas d'arme sélectionnée! "<< std::endl;
   }
+  else {
+    player->setHasPlayed(true);
+    if (payload == 0) {
+      current = new Bomb(pos, vel);
+    }
+    if (payload == 1) {
+      current = new Deagle(pos, vel);
+    }
+    if (payload == 2) {
+      current = new Mine(pos, vel);
+    }
+    if (payload > 2) {
+      std::cout << "[WARN] Arme sélectionnée non reconnue! "<< std::endl;
+      player->setHasPlayed(false);
+    }
+  }
+  return current;
 }

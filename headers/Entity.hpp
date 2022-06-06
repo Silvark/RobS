@@ -2,6 +2,9 @@
 #define ETY_HPP
 
 #include <SFML/Graphics.hpp>
+class Game;
+
+const float GRAVITY = 9.81;
 
 class Entity : public sf::Drawable {
   protected:
@@ -11,8 +14,10 @@ class Entity : public sf::Drawable {
     sf::Sprite * sprite;
 
     sf::Shape * hitbox;
+    float mass;
 
     bool alive;
+    bool inMidair;
 
   public:
     Entity();
@@ -20,7 +25,12 @@ class Entity : public sf::Drawable {
 
     bool const isAlive() const { return alive; }
 
+    void updateVelocity();
+    void setPosition(sf::Vector2f& pos) { position = pos; }
+    sf::Vector2f getPosition() const { return position; }
+
     virtual void move(Game * game) =0;
+    virtual void onCollision(Game * game) =0;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const =0;
 };
 

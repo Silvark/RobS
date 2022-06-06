@@ -39,7 +39,8 @@ class GameLogic {
     void eventMgr(Game * game, const sf::Vector2i& mousePos);
     void physicsMgr(Game * game);
     void changeWeapon(Player * player);
-
+    void changeRob(Player * player);
+    
     void setControlTarget(Rob * playable);
     Rob * const getControlTarget() const;
 

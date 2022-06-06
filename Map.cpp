@@ -15,6 +15,7 @@ Map::Map(std::string input_file) {
 
 size_t Map::coordsToPix(int x, int y) const {
   if (y < 0 || x < 0 || x > size.x || y > size.y) {
+    std::cout << "[DEBUG] Coordonnées accédées (x/y) : " << x << "/" << y << std::endl;
     throw std::invalid_argument( "[ERROR] Accès terrain invalide" );
   }
   return y * size.x + x;

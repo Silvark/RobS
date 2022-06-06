@@ -10,6 +10,7 @@
 class GUIElement : public sf::Drawable {
   private:
     bool alive;
+    bool isActive;
   protected:
     sf::Vector2f position;
     Command* action;
@@ -23,6 +24,10 @@ class GUIElement : public sf::Drawable {
 
     bool const isHovered() const { return hovered; }
     bool const isAlive() const { return alive; }
+
+    bool const getActiveStatus() { return isActive; }
+    void setActiveStatus(bool value) { isActive = value; }
+
     void aliveStatus(bool& value) { alive = value; }
 };
 
@@ -56,14 +61,16 @@ class Inventory : public GUIElement {
     sf::Sprite * overlay;
     sf::RectangleShape frame;
     sf::RectangleShape selected;
-    Player * owner;
     int hoveredSlot;
+    int selectedSlot;
 
   public:
-    Inventory(sf::Vector2f pos, Player * o);
+    Inventory(sf::Vector2f pos);
     ~Inventory();
 
-    void updateSelected();
+    void updateSelected(int index);
+    void setSelectedSlot(int index) { selectedSlot = index; }
+    int const getSelectedSlot() { return selectedSlot; }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void onClick();

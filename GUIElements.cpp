@@ -22,6 +22,7 @@ Button::Button(sf::Vector2f pos, sf::Vector2f sz,
   // hitbox
   setHitbox(pos, sz);
   hovered = false;
+  setActiveStatus(true);
 }
 
 Button::Button(sf::Vector2f pos, sf::Vector2f sz, std::string txt,
@@ -68,9 +69,10 @@ void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 }
 
 
-Inventory::Inventory(sf::Vector2f pos, Player * o) {
+Inventory::Inventory(sf::Vector2f pos) {
   position = pos;
-  owner = o;
+  hoveredSlot = 0;
+  selectedSlot = 0;
 
   overlay_tex = new sf::Texture();
   overlay_tex->loadFromFile("assets/invoverlay.png");
@@ -85,6 +87,8 @@ Inventory::Inventory(sf::Vector2f pos, Player * o) {
 
   selected = sf::RectangleShape(sf::Vector2f(60, 60));
   selected.setFillColor(sf::Color(255, 0, 0, 64));
+
+  setActiveStatus(true);
 }
 
 Inventory::~Inventory() {
@@ -93,11 +97,13 @@ Inventory::~Inventory() {
 }
 
 void Inventory::onClick() {
-  // implémenter chgt d'arme lors du clic?
+  if (hovered) {
+    selectedSlot = hoveredSlot;
+    updateSelected(selectedSlot); // maj graphique
+  }
 }
 
 void Inventory::hoveredStatus(const sf::Vector2i& mousePos) {
-  updateSelected();
   if (mousePos.y >= position.y + 18 && mousePos.y <= position.y + 77) {
     // mesures prises à la main
     if (mousePos.x >= position.x + 18 && mousePos.x <= position.x + 77) {
@@ -124,23 +130,26 @@ void Inventory::hoveredStatus(const sf::Vector2i& mousePos) {
       return;
     }
   }
-  hovered = false;
+  else {
+    hovered = false;
+    hoveredSlot = 0;
+  }
 }
 
-void Inventory::updateSelected() {
-  switch (owner->getSelectedWeaponIndex()) {
-    case -1:
-      selected.setFillColor(sf::Color(255, 0, 0, 0));
-      break;
+void Inventory::updateSelected(int index) {
+  switch (index) {
     case 0:
-      selected.setFillColor(sf::Color(255, 0, 0, 64));
-      selected.setPosition(sf::Vector2f(position.x + 18, position.y + 18));
+      selected.setFillColor(sf::Color(255, 0, 0, 0));
       break;
     case 1:
       selected.setFillColor(sf::Color(255, 0, 0, 64));
-      selected.setPosition(sf::Vector2f(position.x + 95, position.y + 18));
+      selected.setPosition(sf::Vector2f(position.x + 18, position.y + 18));
       break;
     case 2:
+      selected.setFillColor(sf::Color(255, 0, 0, 64));
+      selected.setPosition(sf::Vector2f(position.x + 95, position.y + 18));
+      break;
+    case 3:
       selected.setFillColor(sf::Color(255, 0, 0, 64));
       selected.setPosition(sf::Vector2f(position.x + 172, position.y + 18));
       break;
@@ -149,8 +158,13 @@ void Inventory::updateSelected() {
 
 void Inventory::draw(sf::RenderTarget& target, sf::RenderStates states) const {
   target.draw(*overlay, states);
-  target.draw(selected, states);
+
+  // TODO : dessiner vie
+
   if (hovered) {
     target.draw(frame, states);
+  }
+  if (selectedSlot) {
+    target.draw(selected, states);
   }
 }

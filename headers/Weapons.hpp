@@ -2,13 +2,11 @@
 #define WPN_HPP
 
 #include "Entity.hpp"
+class Player;
 class Game;
-
-const int RESOLUTION = 0.25;
 
 class Weapon : public Entity {
   protected:
-    float mass;
     int nBounces;
     int blastRadius;
 
@@ -16,7 +14,9 @@ class Weapon : public Entity {
     Weapon();
     Weapon(sf::Vector2f pos, sf::Vector2f vel);
     ~Weapon() {}
+
     void move(Game * game);
+    void onCollision(Game * game);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void explode(Game * game);
 };
@@ -47,7 +47,7 @@ class WeaponItem {
   public:
     WeaponItem(int c, int p);
     ~WeaponItem();
-    void generateWeapon(Game * game);
+    Weapon * generateWeapon(Game * game, Player * player);
 };
 
 #endif

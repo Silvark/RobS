@@ -1,3 +1,4 @@
+#include "headers/GUIElements.hpp"
 #include "headers/Player.hpp"
 
 Player::Player(int i) {
@@ -9,9 +10,11 @@ Player::Player(int i) {
   selectedWeapon = nullptr;
   selectedWeaponIndex = -1;
 
-  WeaponItem * bombs = new WeaponItem(99, 0);
-  WeaponItem * deagle = new WeaponItem(99, 1);
-  WeaponItem * mines = new WeaponItem(99, 2);
+  WeaponItem * bombs = new WeaponItem(999, 0);
+  WeaponItem * deagle = new WeaponItem(999, 1);
+  WeaponItem * mines = new WeaponItem(999, 2);
+
+  inv = new Inventory(sf::Vector2f((1280/2)-200, 0));
 
   arsenal.push_back(bombs);
   arsenal.push_back(deagle);
@@ -23,44 +26,55 @@ Player::~Player() {
   squad.clear();
 }
 
-void Player::nextControlledRob() {
+Rob * Player::nextControlledRob() {
+  for (auto rob : squad) {
+    rob->setControlledStatus(false);
+  }
+
   if (controlledRobIndex == -1) {
-     if (squad.size() > 0) {
-       controlledRobIndex = 0;
-     }
-     else {
-       return;
-     }
+    // premier switch
+    controlledRobIndex = 0;
+    controlledRob = squad[controlledRobIndex];
   }
   else {
-    controlledRob->setControlledStatus(false);
-    controlledRobIndex += 1;
-    if (controlledRobIndex > squad.size()) {
-      controlledRobIndex = 0;
-    }
+    do {
+      controlledRobIndex += 1;
+      if (controlledRobIndex > squad.size() - 1) {
+        controlledRobIndex = 0;
+      }
+      controlledRob = squad[controlledRobIndex];
+    } while (controlledRob->isAlive() == false);
   }
-  controlledRob = squad[controlledRobIndex];
   controlledRob->setControlledStatus(true);
+  return controlledRob;
 }
 
-void Player::prevControlledRob() {
+void Player::setSelectedWeapon(int value) {
+  selectedWeaponIndex = value;
+  selectedWeapon = arsenal[selectedWeaponIndex];
+}
+
+Rob * Player::prevControlledRob() {
+  for (auto rob : squad) {
+    rob->setControlledStatus(false);
+  }
+
   if (controlledRobIndex == -1) {
-     if (squad.size() > 0) {
-       controlledRobIndex = 0;
-     }
-     else {
-       return;
-     }
+    // premier switch
+    controlledRobIndex = 0;
+    controlledRob = squad[controlledRobIndex];
   }
   else {
-    controlledRob->setControlledStatus(false);
-    controlledRobIndex -= 1;
-    if (controlledRobIndex < 0) {
-      controlledRobIndex = squad.size() - 1;
-    }
+    do {
+      controlledRobIndex -= 1;
+      if (controlledRobIndex < 0) {
+        controlledRobIndex = squad.size() - 1;
+      }
+      controlledRob = squad[controlledRobIndex];
+    } while (controlledRob->isAlive() == false);
   }
-  controlledRob = squad[controlledRobIndex];
   controlledRob->setControlledStatus(true);
+  return controlledRob;
 }
 
 void Player::addEntity(Rob * ety) {

@@ -22,14 +22,34 @@ Rob * const GameLogic::getControlTarget() const {
 
 void GameLogic::changeWeapon(Player * player) {
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
-    player->setSelectedWeapon(0);
+    player->getInventory()->updateSelected(1); // maj graphique
+    player->getInventory()->setSelectedSlot(1); // suivi sur la structure inv.
+    player->setSelectedWeapon(0); // sélection arme concrète
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
-    player->setSelectedWeapon(1);
+    player->getInventory()->updateSelected(2); // maj graphique
+    player->getInventory()->setSelectedSlot(2); // suivi sur la structure inv.
+    player->setSelectedWeapon(1); // sélection arme concrète
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) {
-    player->setSelectedWeapon(2);
+    player->getInventory()->updateSelected(3); // maj graphique
+    player->getInventory()->setSelectedSlot(3); // suivi sur la structure inv.
+    player->setSelectedWeapon(2); // sélection arme concrète
   }
+  else {
+    player->setSelectedWeapon(player->getInventory()->getSelectedSlot()); // update via click
+  }
+}
+
+void GameLogic::changeRob(Player * player) {
+  Rob * controlRecipient;
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+    controlRecipient = player->prevControlledRob();
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+    controlRecipient = player->nextControlledRob();
+  }
+  setControlTarget(controlRecipient);
 }
 
 void GameLogic::placeRob(sf::Vector2f position, Game * game, Player * owner) {
@@ -144,22 +164,67 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
     case 2: // partie en cours
       // MaJ GUI [combat]
       {
-      Inventory * inv = new Inventory(sf::Vector2f((1280/2)-200, 0), one);
+      // init gui jeu
       game->removeGUIElements();
-      game->addGUIElement(inv);
+      game->addGUIElement(one->getInventory());
+      game->addGUIElement(two->getInventory());
+
+      // mettre le bon inventaire
+      one->getInventory()->setActiveStatus(true);
+      two->getInventory()->setActiveStatus(false);
+
+      // init indicateurs
+      one->nextControlledRob();
+      two->nextControlledRob();
+
       fsm = 21;
-      }
+      one->resetTurnClock();
+    }if (game->isAnythingHovered()) {
+          // click pris en compte par GUI
+          break;
+        }
       break;
 
     case 21: // j1 joue
-      // case 21 tant que one n'a pas joué et peut encore jouer (tour de 25s)
-      changeWeapon(one); // regarde si on change d'arme et agit en csq
+      // case 21 tant que one n'a pas joué et peut encore jouer (tour de 30s)
+      if (one->getTurnClock() > sf::seconds(30)) {
+        std::cout << "[INFO] Fin du tour du joueur 1!\nCause : timeout" << std::endl;
+        fsm = 22;
+
+        // mettre le bon inventaire
+        one->getInventory()->setActiveStatus(false);
+        two->getInventory()->setActiveStatus(true);
+        two->resetTurnClock();
+      }
+      if (one->getHasPlayed() == true) {
+        std::cout << "[INFO] Fin du tour du joueur 1!\nCause : a joué" << std::endl;
+        fsm = 22;
+
+        // mettre le bon inventaire
+        one->getInventory()->setActiveStatus(false);
+        two->getInventory()->setActiveStatus(true);
+        two->resetTurnClock();
+      }
+
+      changeRob(one);
+      changeWeapon(one);
+
+      if (events.mouseButton.button == sf::Mouse::Left) {
+        if (game->isAnythingHovered()) {
+          // click pris en compte par GUI
+          break;
+        }
+
+        Weapon * current = one->getSelectedWeapon()->generateWeapon(game, one);
+        if (current && one->getHasPlayed() == false) {
+          game->addEntity(current);
+        }
+      }
 
       break;
 
     case 22: // j2 joue
-      // case 22 tant que one n'a pas joué et peut encore jouer (tour de 25s)
-      changeWeapon(two); // regarde si on change d'arme et agit en csq
+      // case 22 tant que two n'a pas joué et peut encore jouer (tour de 30s)
 
       break;
 
@@ -183,9 +248,12 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
 }
 
 void GameLogic::physicsMgr(Game * game) {
-  std::vector<Entity *> entities = game->getEntities();
-  for (auto elt : entities) {
-    (*elt)->move(game);
+  std::vector<Entity *> * entities = game->getEntities();
+  for (auto elt : *entities) {
+    if (!elt->isAlive()) {
+      continue;
+    }
+    elt->updateVelocity();
+    elt->move(game);
   }
-
 }

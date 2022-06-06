@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall
+CFLAGS = -Wall -g
 LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 OBJ = Weapons.o Rob.o Entity.o Commands.o GUIElements.o Player.o GameLogic.o Map.o Game.o

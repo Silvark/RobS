@@ -2,6 +2,7 @@
 #define ROB_HPP
 
 #include "Entity.hpp"
+class Game;
 
 class Rob : public Entity {
   private:
@@ -26,13 +27,16 @@ class Rob : public Entity {
     int const getEnergy() const { return energy; }
     void setEnergy(int value) { energy = value; }
 
-    sf::Vector2f calculateAimVector(sf::Vector2i& mousePos);
-    float calculateStrength(sf::Vector2i& mousePos);
+    float const getStrength() const { return strength; }
+    sf::Vector2f const getAimVector() const { return aimVector; }
+
+    void calculateAimVector(sf::Vector2i mousePos);
 
     void setControlledStatus(bool value) { isControlled = value; }
     bool const getControlledStatus() { return isControlled; }
 
     void move(Game * game);
+    void onCollision(Game * game);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 

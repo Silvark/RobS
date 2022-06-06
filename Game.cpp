@@ -31,12 +31,6 @@ void Game::update() {
 
   if (inGame) {
     window->draw(*terrain, sf::RenderStates::Default);
-
-    // // TODO : DESSIN DES ENTITES VIA CLASSE
-    //  for (auto elt : entities) {
-    //   // /!\ DEPLACEMENT ENTITES
-    //   window->draw(*elt, sf::RenderStates::Default);
-    // }
   }
 
   for (auto elt : entities) {
@@ -48,7 +42,9 @@ void Game::update() {
   }
 
   for (auto elt : gui) {
-    window->draw(*elt, sf::RenderStates::Default);
+    if (elt->getActiveStatus() == true) {
+      window->draw(*elt, sf::RenderStates::Default);
+    }
   }
 
   window->display();
@@ -65,11 +61,19 @@ void Game::cleanGUIElements() {
   int i = 0;
   for (auto elt : gui) {
     if (!elt->isAlive()) {
-      delete elt;
       gui.erase(gui.begin() + i);
     }
     i++;
   }
+}
+
+bool Game::isAnythingHovered() {
+  for (auto elt : gui) {
+    if (elt->isHovered()) {
+      return true;
+    }
+  }
+  return false;
 }
 
 void Game::addEntity(Entity * ety) { entities.push_back(ety); }
@@ -79,16 +83,6 @@ void Game::addEntity(std::vector<Entity *> etys) {
   }
 }
 void Game::removeEntities() { entities.clear(); }
-void Game::cleanEntities() {
-  int i = 0;
-  for (auto elt : entities) {
-    if (!elt->isAlive()) { // /!\ CHECK VIE ENTITE
-      delete elt;
-      entities.erase(entities.begin() + i);
-    }
-    i++;
-  }
-}
 
 void Game::addElement(sf::Sprite * elt) { elements.push_back(elt); }
 void Game::addElement(std::vector<sf::Sprite *> elts) {

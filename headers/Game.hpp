@@ -32,11 +32,11 @@ class Game {
     void removeGUIElements();
     void cleanGUIElements();
     std::vector<GUIElement *> * const getGUI() { return &gui; }
+    bool isAnythingHovered();
 
     void addEntity(Entity * ety);
     void addEntity(std::vector<Entity *> etys);
     void removeEntities();
-    void cleanEntities();
     std::vector<Entity *> * const getEntities() { return &entities; }
 
     void addElement(sf::Sprite * elt);
