@@ -7,6 +7,7 @@ Entity::Entity() {
   texture = new sf::Texture();
   sprite = new sf::Sprite();
   alive = true;
+  inMidair = true;
 }
 
 Entity::~Entity() {
@@ -17,11 +18,11 @@ Entity::~Entity() {
 
 void Entity::updateVelocity() {
   // update vitesse
-  if (velocity.x < 250) {
+  if (velocity.x < 1) {
     // ajout des frottements de l'air? :')
     velocity.x += 0;
   }
-  if (velocity.y < 250 && inMidair) {
+  if (velocity.y < 1 && inMidair) {
     velocity.y += GRAVITY/1e4 * 1/60;
   }
 }

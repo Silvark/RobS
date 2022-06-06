@@ -195,6 +195,7 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
         one->getInventory()->setActiveStatus(false);
         two->getInventory()->setActiveStatus(true);
         two->resetTurnClock();
+        two->setHasPlayed(false);
       }
       if (one->getHasPlayed() == true) {
         std::cout << "[INFO] Fin du tour du joueur 1!\nCause : a joué" << std::endl;
@@ -215,6 +216,8 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
           break;
         }
 
+        one->getControlledRob()->calculateAimVector(mousePos);
+
         Weapon * current = one->getSelectedWeapon()->generateWeapon(game, one);
         if (current && one->getHasPlayed() == false) {
           game->addEntity(current);
@@ -225,6 +228,42 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
 
     case 22: // j2 joue
       // case 22 tant que two n'a pas joué et peut encore jouer (tour de 30s)
+      if (two->getTurnClock() > sf::seconds(30)) {
+        std::cout << "[INFO] Fin du tour du joueur 2!\nCause : timeout" << std::endl;
+        fsm = 21;
+
+        // mettre le bon inventaire
+        two->getInventory()->setActiveStatus(false);
+        one->getInventory()->setActiveStatus(true);
+        one->resetTurnClock();
+      }
+      if (two->getHasPlayed() == true) {
+        std::cout << "[INFO] Fin du tour du joueur 2!\nCause : a joué" << std::endl;
+        fsm = 21;
+
+        // mettre le bon inventaire
+        two->getInventory()->setActiveStatus(false);
+        one->getInventory()->setActiveStatus(true);
+        one->resetTurnClock();
+        one->setHasPlayed(false);
+      }
+
+      changeRob(two);
+      changeWeapon(two);
+
+      if (events.mouseButton.button == sf::Mouse::Left) {
+        if (game->isAnythingHovered()) {
+          // click pris en compte par GUI
+          break;
+        }
+
+        two->getControlledRob()->calculateAimVector(mousePos);
+
+        Weapon * current = two->getSelectedWeapon()->generateWeapon(game, two);
+        if (current) {
+          game->addEntity(current);
+        }
+      }
 
       break;
 

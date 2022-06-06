@@ -34,7 +34,9 @@ void Game::update() {
   }
 
   for (auto elt : entities) {
-    window->draw(*elt, sf::RenderStates::Default);
+    if (elt->isAlive()) {
+      window->draw(*elt, sf::RenderStates::Default);
+    }
   }
 
   for (auto elt : elements) {

@@ -57,7 +57,6 @@ void Map::updateNormals(int left, int top, int width, int height) {
         normals[coordsToPix(i, j)] = computeNormal(i, j, MASK_SIZE);
         // map.setPixel(i, j, sf::Color(255, 0, 0, 128)); // debug
       }
-
     }
   }
 }

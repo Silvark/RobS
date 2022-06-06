@@ -10,9 +10,9 @@ Player::Player(int i) {
   selectedWeapon = nullptr;
   selectedWeaponIndex = -1;
 
-  WeaponItem * bombs = new WeaponItem(999, 0);
-  WeaponItem * deagle = new WeaponItem(999, 1);
-  WeaponItem * mines = new WeaponItem(999, 2);
+  WeaponItem * bombs = new WeaponItem(999, 1);
+  WeaponItem * deagle = new WeaponItem(999, 2);
+  WeaponItem * mines = new WeaponItem(999, 3);
 
   inv = new Inventory(sf::Vector2f((1280/2)-200, 0));
 

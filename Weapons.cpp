@@ -82,27 +82,47 @@ void Weapon::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 }
 
 void Weapon::explode(Game * game) {
+  std::cout << "[INFO] Explosion!" << std::endl;
+  sf::FloatRect midpoint = sprite->getLocalBounds();
+  sf::Vector2i midPos;
+  midPos.x = position.x + midpoint.width/2;
+  midPos.y = position.y + midpoint.height/2;
 
+  for (int x = position.x; x < position.x + 2*blastRadius; x++) {
+    for (int y = position.y; y < position.y + 2*blastRadius; y++) {
+      if (( x - midPos.x ) * ( x - midPos.x ) + ( y - midPos.y ) * ( y - midPos.y ) <= blastRadius * blastRadius) {
+        game->getMap()->setPixel(x, y, 0);
+      }
+    }
+  }
+
+  game->getMap()->updateMap(position.x - 0.5*blastRadius, position.y - 0.5*blastRadius, 3*blastRadius, 3*blastRadius);
 }
 
 Bomb::Bomb(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
-  mass = 20;
+  mass = 200;
   velocity.x = velocity.x / mass;
-  velocity.y = velocity.y / mass;
+  velocity.y = -velocity.y / mass; // le sol est vers les +, le ciel vers les -
 
   blastRadius = 20;
   nBounces = 0;
 
+  texture = new sf::Texture();
+  sprite = new sf::Sprite();
+
   texture->loadFromFile("assets/bomb.png");
   sprite->setTexture(*texture);
   sprite->setPosition(position);
-  sprite->setScale(1/2, 1/2);
+  sf::Vector2f scale = sprite->getScale();
+  sprite->setScale(scale.x * 0.5, scale.y * 0.5);
 
-  hitbox = new sf::CircleShape(15);
-  hitbox->setPosition(position);
+  // std::cout << "[DEBUG] BOMBE" << std::endl;
+  // std::cout << "POSITION " << position.x << " " << position.y << std::endl;
+  // std::cout << "VITESSE " << velocity.x << " " << velocity.y << std::endl;
+
 }
 Bomb::~Bomb() {}
 
@@ -110,20 +130,21 @@ Deagle::Deagle(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
-  mass = 5;
+  mass = 100;
   velocity.x = velocity.x / mass;
-  velocity.y = velocity.y / mass;
+  velocity.y = -velocity.y / mass; // le sol est vers les +, le ciel vers les -
 
   blastRadius = 10;
   nBounces = 0;
 
+  texture = new sf::Texture();
+  sprite = new sf::Sprite();
+
   texture->loadFromFile("assets/deagle.png");
   sprite->setTexture(*texture);
   sprite->setPosition(position);
-  sprite->setScale(1/6, 1/6);
-
-  hitbox = new sf::CircleShape(5);
-  hitbox->setPosition(position);
+  sf::Vector2f scale = sprite->getScale();
+  sprite->setScale(scale.x * 0.5, scale.y * 0.5);
 }
 Deagle::~Deagle() {}
 
@@ -131,20 +152,21 @@ Mine::Mine(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
-  mass = 40;
+  mass = 400;
   velocity.x = velocity.x / mass;
   velocity.y = -velocity.y / mass; // le sol est vers les +, le ciel vers les -
 
   blastRadius = 50;
   nBounces = 0;
 
+  texture = new sf::Texture();
+  sprite = new sf::Sprite();
+
   texture->loadFromFile("assets/mine.png");
   sprite->setTexture(*texture);
   sprite->setPosition(position);
-  sprite->setScale(1/3, 1/3);
-
-  hitbox = new sf::RectangleShape(sf::Vector2f(sprite->getGlobalBounds().width, sprite->getGlobalBounds().height));
-  hitbox->setPosition(sf::Vector2f(sprite->getGlobalBounds().left, sprite->getGlobalBounds().top));
+  sf::Vector2f scale = sprite->getScale();
+  sprite->setScale(scale.x * 0.5, scale.y * 0.5);
 }
 Mine::~Mine() {}
 
@@ -156,8 +178,8 @@ WeaponItem::WeaponItem(int c, int p) {
 Weapon * WeaponItem::generateWeapon(Game * game, Player * player) {
   Rob * rob = player->getControlledRob();
   sf::Vector2f pos = rob->getPosition();
-  pos.x = rob->getAimVector().x * 3;
-  pos.y = rob->getAimVector().y * 3;
+  pos.x += rob->getAimVector().x * 3;
+  pos.y += rob->getAimVector().y * 3;
   sf::Vector2f vel(rob->getStrength(), rob->getStrength());
   Weapon * current = nullptr;
 
@@ -166,16 +188,16 @@ Weapon * WeaponItem::generateWeapon(Game * game, Player * player) {
   }
   else {
     player->setHasPlayed(true);
-    if (payload == 0) {
+    if (payload == 1) {
       current = new Bomb(pos, vel);
     }
-    if (payload == 1) {
+    if (payload == 2) {
       current = new Deagle(pos, vel);
     }
-    if (payload == 2) {
+    if (payload == 3) {
       current = new Mine(pos, vel);
     }
-    if (payload > 2) {
+    if (payload > 3) {
       std::cout << "[WARN] Arme sélectionnée non reconnue! "<< std::endl;
       player->setHasPlayed(false);
     }

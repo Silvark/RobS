@@ -8,7 +8,7 @@ Rob::Rob(sf::Vector2f pos, sf::Vector2f vel, int type) {
   health = 100;
   energy = 100;
 
-  mass = 100;
+  mass = 1;
 
   isControlled = false;
   inMidair = true;
@@ -57,7 +57,7 @@ void Rob::calculateAimVector(sf::Vector2i mousePos) {
   dist = std::sqrt(aimVector.x * aimVector.x + aimVector.y * aimVector.y);
   aimVector = aimVector/dist; // vecteur unitaire
 
-  strength = dist/72;
+  strength = dist/24;
   if (strength > 30) { strength = 30; }
 }
 
