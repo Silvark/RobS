@@ -139,17 +139,21 @@ void Inventory::hoveredStatus(const sf::Vector2i& mousePos) {
 void Inventory::updateSelected(int index) {
   switch (index) {
     case 0:
+      // pas de sélection
       selected.setFillColor(sf::Color(255, 0, 0, 0));
       break;
     case 1:
+      // bombe
       selected.setFillColor(sf::Color(255, 0, 0, 64));
       selected.setPosition(sf::Vector2f(position.x + 18, position.y + 18));
       break;
     case 2:
+      // deagle
       selected.setFillColor(sf::Color(255, 0, 0, 64));
       selected.setPosition(sf::Vector2f(position.x + 95, position.y + 18));
       break;
     case 3:
+      // mine
       selected.setFillColor(sf::Color(255, 0, 0, 64));
       selected.setPosition(sf::Vector2f(position.x + 172, position.y + 18));
       break;

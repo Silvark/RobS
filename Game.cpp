@@ -45,6 +45,7 @@ void Game::update() {
 
   for (auto elt : gui) {
     if (elt->getActiveStatus() == true) {
+      // pas de tracé pour les éléments HS
       window->draw(*elt, sf::RenderStates::Default);
     }
   }

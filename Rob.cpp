@@ -11,7 +11,6 @@ Rob::Rob(sf::Vector2f pos, sf::Vector2f vel, int type) {
   mass = 1;
 
   isControlled = false;
-  inMidair = true;
   strength = 0;
   aimVector = sf::Vector2f(0, 0);
 
@@ -54,16 +53,16 @@ void Rob::calculateAimVector(sf::Vector2i mousePos) {
   aimVector.x = mousePos.x - midPoint.x;
   aimVector.y = mousePos.y - midPoint.y;
 
-  dist = std::sqrt(aimVector.x * aimVector.x + aimVector.y * aimVector.y);
-  aimVector = aimVector/dist; // vecteur unitaire
+  dist = std::sqrt((aimVector.x * aimVector.x) + (aimVector.y * aimVector.y));
+  aimVector.x = aimVector.x/dist; // vecteur unitaire
+  aimVector.y = aimVector.y/dist; // vecteur unitaire
 
-  strength = dist/24;
-  if (strength > 30) { strength = 30; }
+  strength = dist/(1280*3);
 }
 
 void Rob::move(Game * game) {
   Map * terrain = game->getMap();
-  bool collides;
+  bool collides = false;
 
   sf::Vector2f initialPosition = this->getPosition();
   sf::Vector2f finalPosition;
@@ -114,7 +113,6 @@ void Rob::move(Game * game) {
 }
 
 void Rob::onCollision(Game * game) {
-  inMidair = false;
   velocity.x = 0;
   velocity.y = 0;
 }

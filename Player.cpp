@@ -51,7 +51,7 @@ Rob * Player::nextControlledRob() {
 
 void Player::setSelectedWeapon(int value) {
   selectedWeaponIndex = value;
-  selectedWeapon = arsenal[selectedWeaponIndex];
+  selectedWeapon = arsenal[selectedWeaponIndex-1];
 }
 
 Rob * Player::prevControlledRob() {

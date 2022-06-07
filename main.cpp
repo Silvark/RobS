@@ -17,7 +17,7 @@ sf::Sprite * spriteFromTexture(sf::Texture * texture, bool setOriginToMiddle, fl
 
 int main() {
   // [SKIP] ici pour passer l'intro
-  bool introIsPlaying = true;
+  bool introIsPlaying = false;
 
   // Initialisation globale
   /// Jeu

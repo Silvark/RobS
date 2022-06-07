@@ -24,17 +24,17 @@ void GameLogic::changeWeapon(Player * player) {
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
     player->getInventory()->updateSelected(1); // maj graphique
     player->getInventory()->setSelectedSlot(1); // suivi sur la structure inv.
-    player->setSelectedWeapon(0); // sélection arme concrète
+    player->setSelectedWeapon(1); // sélection arme concrète
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
     player->getInventory()->updateSelected(2); // maj graphique
     player->getInventory()->setSelectedSlot(2); // suivi sur la structure inv.
-    player->setSelectedWeapon(1); // sélection arme concrète
+    player->setSelectedWeapon(2); // sélection arme concrète
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) {
     player->getInventory()->updateSelected(3); // maj graphique
     player->getInventory()->setSelectedSlot(3); // suivi sur la structure inv.
-    player->setSelectedWeapon(2); // sélection arme concrète
+    player->setSelectedWeapon(3); // sélection arme concrète
   }
   else {
     player->setSelectedWeapon(player->getInventory()->getSelectedSlot()); // update via click
@@ -179,10 +179,8 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
 
       fsm = 21;
       one->resetTurnClock();
-    }if (game->isAnythingHovered()) {
-          // click pris en compte par GUI
-          break;
-        }
+      one->setHasPlayed(false);
+      }
       break;
 
     case 21: // j1 joue
@@ -195,22 +193,14 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
         one->getInventory()->setActiveStatus(false);
         two->getInventory()->setActiveStatus(true);
         two->resetTurnClock();
+        two->resetActionCooldown();
         two->setHasPlayed(false);
-      }
-      if (one->getHasPlayed() == true) {
-        std::cout << "[INFO] Fin du tour du joueur 1!\nCause : a joué" << std::endl;
-        fsm = 22;
-
-        // mettre le bon inventaire
-        one->getInventory()->setActiveStatus(false);
-        two->getInventory()->setActiveStatus(true);
-        two->resetTurnClock();
       }
 
       changeRob(one);
       changeWeapon(one);
 
-      if (events.mouseButton.button == sf::Mouse::Left) {
+      if (events.mouseButton.button == sf::Mouse::Left && one->getActionCooldown() > sf::seconds(0.3)) {
         if (game->isAnythingHovered()) {
           // click pris en compte par GUI
           break;
@@ -219,8 +209,17 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
         one->getControlledRob()->calculateAimVector(mousePos);
 
         Weapon * current = one->getSelectedWeapon()->generateWeapon(game, one);
-        if (current && one->getHasPlayed() == false) {
+        if (current && one->getHasPlayed() == true) {
           game->addEntity(current);
+          std::cout << "[INFO] Fin du tour du joueur 1!\nCause : a joué" << std::endl;
+          fsm = 22;
+
+          // mettre le bon inventaire
+          one->getInventory()->setActiveStatus(false);
+          two->getInventory()->setActiveStatus(true);
+          two->resetTurnClock();
+          two->resetActionCooldown();
+          two->setHasPlayed(false);
         }
       }
 
@@ -236,22 +235,14 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
         two->getInventory()->setActiveStatus(false);
         one->getInventory()->setActiveStatus(true);
         one->resetTurnClock();
-      }
-      if (two->getHasPlayed() == true) {
-        std::cout << "[INFO] Fin du tour du joueur 2!\nCause : a joué" << std::endl;
-        fsm = 21;
-
-        // mettre le bon inventaire
-        two->getInventory()->setActiveStatus(false);
-        one->getInventory()->setActiveStatus(true);
-        one->resetTurnClock();
+        one->resetActionCooldown();
         one->setHasPlayed(false);
       }
 
       changeRob(two);
       changeWeapon(two);
 
-      if (events.mouseButton.button == sf::Mouse::Left) {
+      if (events.mouseButton.button == sf::Mouse::Left && two->getActionCooldown() > sf::seconds(0.3)) {
         if (game->isAnythingHovered()) {
           // click pris en compte par GUI
           break;
@@ -260,8 +251,17 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
         two->getControlledRob()->calculateAimVector(mousePos);
 
         Weapon * current = two->getSelectedWeapon()->generateWeapon(game, two);
-        if (current) {
+        if (current && two->getHasPlayed() == true) {
           game->addEntity(current);
+          std::cout << "[INFO] Fin du tour du joueur 2!\nCause : a joué" << std::endl;
+          fsm = 21;
+
+          // mettre le bon inventaire
+          two->getInventory()->setActiveStatus(false);
+          one->getInventory()->setActiveStatus(true);
+          one->resetTurnClock();
+          one->resetActionCooldown();
+          one->setHasPlayed(false);
         }
       }
 
@@ -289,10 +289,10 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
 void GameLogic::physicsMgr(Game * game) {
   std::vector<Entity *> * entities = game->getEntities();
   for (auto elt : *entities) {
-    if (!elt->isAlive()) {
-      continue;
+    if (elt->isAlive()) {
+      // pas de simulation pour les éléments HS
+      elt->updateVelocity();
+      elt->move(game);
     }
-    elt->updateVelocity();
-    elt->move(game);
   }
 }

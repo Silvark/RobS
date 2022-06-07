@@ -88,24 +88,24 @@ void Weapon::explode(Game * game) {
   midPos.x = position.x + midpoint.width/2;
   midPos.y = position.y + midpoint.height/2;
 
-  for (int x = position.x; x < position.x + 2*blastRadius; x++) {
-    for (int y = position.y; y < position.y + 2*blastRadius; y++) {
-      if (( x - midPos.x ) * ( x - midPos.x ) + ( y - midPos.y ) * ( y - midPos.y ) <= blastRadius * blastRadius) {
-        game->getMap()->setPixel(x, y, 0);
+  for (int x = midPos.x - blastRadius; x < midPos.x + blastRadius; x++) {
+    for (int y = midPos.y - blastRadius; y < midPos.y + blastRadius; y++) {
+      if (( midPos.x - x ) * ( midPos.x - x ) + ( midPos.y - y ) * ( midPos.y - y ) <= blastRadius * blastRadius) {
+        try { game->getMap()->setPixel(x, y, 0); }
+        catch (const std::invalid_argument& except) { continue; }
       }
     }
   }
-
-  game->getMap()->updateMap(position.x - 0.5*blastRadius, position.y - 0.5*blastRadius, 3*blastRadius, 3*blastRadius);
+  game->getMap()->updateMap(position.x - blastRadius, position.y - blastRadius, 4*blastRadius, 4*blastRadius);
 }
 
 Bomb::Bomb(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
-  mass = 200;
-  velocity.x = velocity.x / mass;
-  velocity.y = -velocity.y / mass; // le sol est vers les +, le ciel vers les -
+  mass = 3;
+  velocity.x = velocity.x/mass;
+  velocity.y = velocity.y/mass;
 
   blastRadius = 20;
   nBounces = 0;
@@ -130,9 +130,9 @@ Deagle::Deagle(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
-  mass = 100;
-  velocity.x = velocity.x / mass;
-  velocity.y = -velocity.y / mass; // le sol est vers les +, le ciel vers les -
+  mass = 0.25;
+  velocity.x = velocity.x/mass;
+  velocity.y = velocity.y/mass;
 
   blastRadius = 10;
   nBounces = 0;
@@ -152,9 +152,9 @@ Mine::Mine(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
-  mass = 400;
-  velocity.x = velocity.x / mass;
-  velocity.y = -velocity.y / mass; // le sol est vers les +, le ciel vers les -
+  mass = 6;
+  velocity.x = velocity.x/mass;
+  velocity.y = velocity.y/mass;
 
   blastRadius = 50;
   nBounces = 0;
@@ -176,18 +176,21 @@ WeaponItem::WeaponItem(int c, int p) {
 }
 
 Weapon * WeaponItem::generateWeapon(Game * game, Player * player) {
-  Rob * rob = player->getControlledRob();
-  sf::Vector2f pos = rob->getPosition();
-  pos.x += rob->getAimVector().x * 3;
-  pos.y += rob->getAimVector().y * 3;
-  sf::Vector2f vel(rob->getStrength(), rob->getStrength());
   Weapon * current = nullptr;
-
-  if (payload == 0) {
-    std::cout << "[WARN] Pas d'arme sélectionnée! "<< std::endl;
+  if (player->getSelectedWeaponIndex() < 1 || player->getSelectedWeaponIndex() > 3) {
+    std::cout << "[WARN] Pas d'arme sélectionnée" << std::endl;
   }
   else {
-    player->setHasPlayed(true);
+    float mult = player->getControlledRob()->getStrength();
+    sf::Vector2f vel = player->getControlledRob()->getAimVector();
+    vel.x *= 2; // éviter une collision de l'arme avec le rob qui la lance
+    vel.y *= 2; // éviter une collision de l'arme avec le rob qui la lance
+    sf::Vector2f pos = player->getControlledRob()->getPosition() + vel;
+
+    // ajustement du lancer en fonction de la force
+    vel.x *= mult;
+    vel.y *= mult;
+
     if (payload == 1) {
       current = new Bomb(pos, vel);
     }
@@ -197,10 +200,7 @@ Weapon * WeaponItem::generateWeapon(Game * game, Player * player) {
     if (payload == 3) {
       current = new Mine(pos, vel);
     }
-    if (payload > 3) {
-      std::cout << "[WARN] Arme sélectionnée non reconnue! "<< std::endl;
-      player->setHasPlayed(false);
-    }
+    player->setHasPlayed(true);
   }
   return current;
 }
