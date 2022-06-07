@@ -34,7 +34,7 @@ class Map : public sf::Drawable { // permet d'avoir un objet customisé et pouva
 
     sf::Vector2u getSize() const {return size;}
 
-    bool getPixel(int x, int y) const {return collide_map[coordsToPix(x, y)];}
+    bool getPixel(int x, int y) const;
     void setPixel(int x, int y, int value);
 
     void updateMap(int left, int top, int width, int height);

@@ -62,63 +62,81 @@ void Rob::calculateAimVector(sf::Vector2i mousePos) {
 
 void Rob::move(Game * game) {
   Map * terrain = game->getMap();
-  bool collides = false;
+  sf::FloatRect dims = sprite->getLocalBounds();
+  bool colTL, colTR, colBL, colBR;
+  position.y -= GRAVITY/1e4;
 
-  // calcul du mouvement sur une frame
-  sf::Vector2f initialPosition = this->getPosition();
-  sf::Vector2f finalPosition;
-  sf::Vector2f displacement;
-  sf::FloatRect collidePoint = sprite->getLocalBounds();
+  sf::Vector2f finalPos = position + velocity; // velocity est en unités de déplacement
+  sf::Vector2f interPos;
 
-  // ajustement pour faire les calculs sur le point milieu du rob
-  initialPosition.x += collidePoint.width/2;
-  initialPosition.y += collidePoint.height;
+  float resolution = 0.1;
+  for (float increment = 0; increment <= 1; increment = increment + resolution) {
+    interPos.x = (velocity.x * increment) + position.x;
+    interPos.y = (velocity.y * increment) + position.y;
 
-  finalPosition.x = initialPosition.x + velocity.x;
-  finalPosition.y = initialPosition.y + velocity.y;
-
-  displacement.x = finalPosition.x - initialPosition.x;
-  displacement.y = finalPosition.y - initialPosition.y;
-
-  sf::Vector2f intermediatePosition;
-  float resolution = 0.01;
-
-  // check des positions intermédiaires de ce déplacement
-  for (float increment = 0; increment < 1; increment = increment + resolution) {
-    intermediatePosition.x = initialPosition.x + displacement.x * increment;
-    intermediatePosition.y = initialPosition.y + displacement.y * increment;
-
+    // check coin sup gauche
     try {
-    collides = terrain->getPixel(floor(intermediatePosition.x), floor(intermediatePosition.y))
-    && terrain->getPixel(ceil(intermediatePosition.x), ceil(intermediatePosition.y));
+    colTL = terrain->getPixel(floor(interPos.x) + 1, floor(interPos.y) + 1)
+            && terrain->getPixel(ceil(interPos.x) + 1, ceil(interPos.y) + 1);
     }
+
     catch (const std::invalid_argument& except) {
       // out of bounds
-      std::cout << "[WARN] Entité hors de la map!" << std::endl;
-      collides = false;
+      alive = false;
+      return;
+    }
+    // check coin sup droit
+    try {
+    colTR = terrain->getPixel(floor(interPos.x + dims.width) - 1, floor(interPos.y) + 1)
+            && terrain->getPixel(ceil(interPos.x + dims.width) - 1, ceil(interPos.y) + 1);
+    }
+
+    catch (const std::invalid_argument& except) {
+      // out of bounds
       alive = false;
       return;
     }
 
-    // collision sur un des points intermédiaires
-    if (collides) {
-      intermediatePosition.x -= collidePoint.width/2;
-      intermediatePosition.y -= collidePoint.height;
-      this->setPosition(intermediatePosition);
-      onCollision(game);
+    // check coin inf gauche
+    try {
+    colBL = terrain->getPixel(floor(interPos.x) + 1, floor(interPos.y + dims.height) - 1)
+            && terrain->getPixel(ceil(interPos.x) + 1, ceil(interPos.y + dims.height) - 1);
+    }
+
+    catch (const std::invalid_argument& except) {
+      // out of bounds
+      alive = false;
       return;
     }
-  }
 
-  // pas de collision
-  finalPosition.x -= collidePoint.width/2;
-  finalPosition.y -= collidePoint.height;
-  this->setPosition(finalPosition);
-  return;
+    // check coin inf droit
+    try {
+    colBR = terrain->getPixel(floor(interPos.x + dims.width) - 1, floor(interPos.y + dims.height) - 1)
+            && terrain->getPixel(ceil(interPos.x + dims.width) - 1, ceil(interPos.y + dims.height) - 1);
+    }
+
+    catch (const std::invalid_argument& except) {
+      // out of bounds
+      alive = false;
+      return;
+    }
+
+    if (colBL || colBR || colTL || colTR ) {
+      // collision qq part
+      interPos.x -= (velocity.x * increment);
+      interPos.y -= (velocity.y * increment);
+      onCollision(game);
+      break;
+    }
+  }
+  position = interPos;
 }
 
 void Rob::onCollision(Game * game) {
+  velocity.x = 0;
+  velocity.y = 0;
   midAir = false;
+  return;
 }
 
 void Rob::draw(sf::RenderTarget& target, sf::RenderStates states) const {

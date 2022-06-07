@@ -13,14 +13,11 @@ Entity::Entity() {
 Entity::~Entity() {
   delete texture;
   delete sprite;
-  delete hitbox;
 }
 
 // gravité, effets physiques
 void Entity::updateVelocity() {
   velocity.y += GRAVITY/1e4 * 1/60;
-  // if (velocity.x > 0.05) { velocity.x = 0.05; }
-  // if (velocity.y > 0.5) { velocity.y = 0.5; }
 }
 
 // déplacement

@@ -47,7 +47,7 @@ void Weapon::move(Game * game) {
   sf::Vector2f intermediatePosition;
   float resolution = 0.05;
 
-  for (float increment = 0; increment < 1; increment = increment + resolution) {
+  for (float increment = 0; increment <= 1; increment = increment + resolution) {
     intermediatePosition.x = initialPosition.x + displacement.x * increment;
     intermediatePosition.y = initialPosition.y + displacement.y * increment;
 
@@ -152,7 +152,7 @@ Mine::Mine(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
-  mass = 60;
+  mass = 40;
   velocity.x = velocity.x/mass;
   velocity.y = velocity.y/mass;
 

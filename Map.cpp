@@ -21,6 +21,12 @@ size_t Map::coordsToPix(int x, int y) const {
   return y * size.x + x;
 }
 
+bool Map::getPixel(int x, int y) const {
+  try { coordsToPix(x, y); }
+  catch (const std::invalid_argument& except) { return false; }
+  return collide_map[coordsToPix(x, y)];
+}
+
 void Map::setPixel(int x, int y, int value) {
   try { coordsToPix(x, y); }
   catch (const std::invalid_argument& except) { return; }

@@ -90,26 +90,36 @@ void GameLogic::placeRob(sf::Vector2f position, Game * game, Player * owner) {
 }
 
 void GameLogic::moveRob(Player * player) {
-  Rob * controlRecipient = player->getControlledRob();
-  sf::Vector2f vel = controlRecipient->getAimVector();
-  float mult = controlRecipient->getStrength();
+  sf::Vector2f vel = controlTarget->getAimVector();
+  float mult = controlTarget->getStrength();
   sf::Vector2f mov(0, 0);
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-    mov.x -= 0.01;
+    if (player->getActionCooldown() > sf::seconds(0.1) && !controlTarget->getMidair()) {
+      mov.x -= 0.005;
+      mov.y -= 0.03;
+      player->resetActionCooldown();
+      controlTarget->setMidair(true);
+    }
   }
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-    mov.x += 0.01;
+    if (player->getActionCooldown() > sf::seconds(0.1) && !controlTarget->getMidair()) {
+      mov.x += 0.005;
+      mov.y -= 0.03;
+      player->resetActionCooldown();
+      controlTarget->setMidair(true);
+    }
   }
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-    std::cout << "[DEBUG] Saut!" << '\n';
-    mov = vel;
-    mov.x *= mult;
-    mov.y *= mult;
+    if (player->getActionCooldown() > sf::seconds(1)) {
+      mov.y -= 0.06;
+      player->resetActionCooldown();
+      controlTarget->setMidair(true);
+    }
   }
-  controlRecipient->updateVelocity(mov);
+  controlTarget->updateVelocity(mov);
 }
 
 int const GameLogic::getFSM() {
@@ -222,6 +232,7 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
 
       one->getControlledRob()->calculateAimVector(mousePos);
       changeRob(one);
+      controlTarget = one->getControlledRob();
       changeWeapon(one);
       moveRob(one);
 
@@ -264,6 +275,7 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
 
       two->getControlledRob()->calculateAimVector(mousePos);
       changeRob(two);
+      controlTarget = two->getControlledRob();
       changeWeapon(two);
       moveRob(two);
 

@@ -8,13 +8,18 @@ Game::Game() {
 
 Game::~Game() {
   removeEntities();
+  std::cout << "[CLEAN] Entités" << std::endl;
   removeGUIElements();
-  removeElements();
+  std::cout << "[CLEAN] Éléments GUI" << std::endl;
 
   delete terrain;
+  std::cout << "[CLEAN] Map" << std::endl;
   delete bgimg;
+  std::cout << "[CLEAN] Image de fond" << std::endl;
   delete brain;
+  std::cout << "[CLEAN] GameLogic" << std::endl;
   window->close();
+  std::cout << "[CLEAN] Fenêtre" << std::endl;
 }
 
 void Game::update() {

@@ -13,7 +13,6 @@ class Entity : public sf::Drawable {
     sf::Texture * texture;
     sf::Sprite * sprite;
 
-    sf::Shape * hitbox;
     float mass;
 
     bool alive;
