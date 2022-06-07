@@ -260,6 +260,16 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
           two->resetTurnClock();
           two->resetActionCooldown();
           two->setHasPlayed(false);
+
+          // DEBUG : bilan HP
+          std::cout << "[DEBUG] Points de vie équipe 1" << std::endl;
+          for (auto rob : one->getSquad()) {
+            std::cout << rob->getHealth() << std::endl;
+          }
+          std::cout << "[DEBUG] Points de vie équipe 2" << std::endl;
+          for (auto rob : two->getSquad()) {
+            std::cout << rob->getHealth() << std::endl;
+          }
         }
       }
 

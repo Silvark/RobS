@@ -24,6 +24,7 @@ class Entity : public sf::Drawable {
     ~Entity();
 
     bool const isAlive() const { return alive; }
+    void aliveStatus(bool value) { alive = value; }
 
     void updateVelocity();
     void updateVelocity(sf::Vector2f vel);

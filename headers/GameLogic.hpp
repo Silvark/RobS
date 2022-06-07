@@ -42,6 +42,8 @@ class GameLogic {
     void changeRob(Player * player);
     void moveRob(Player * player);
 
+    Player * getPlayer(int id) { if (id == 1) {return one;} if (id == 2) {return two;} return nullptr; }
+
     void setControlTarget(Rob * playable);
     Rob * const getControlTarget() const;
 

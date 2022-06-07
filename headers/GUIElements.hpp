@@ -17,6 +17,7 @@ class GUIElement : public sf::Drawable {
     bool hovered;
 
   public:
+    GUIElement() { alive = true; }
     const sf::Vector2f& getPosition() const { return position; }
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const =0;
     virtual void onClick() =0;
@@ -28,7 +29,7 @@ class GUIElement : public sf::Drawable {
     bool const getActiveStatus() { return isActive; }
     void setActiveStatus(bool value) { isActive = value; }
 
-    void aliveStatus(bool& value) { alive = value; }
+    void aliveStatus(bool value) { alive = value; }
 };
 
 class Button : public GUIElement {

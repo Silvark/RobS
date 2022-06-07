@@ -37,6 +37,7 @@ class Player {
     sf::Time const getTurnClock() { return turnClock.getElapsedTime(); }
     bool const getHasPlayed() { return hasPlayed; }
     Inventory * const getInventory() { return inv; }
+    std::vector<Rob *> getSquad() { return squad; }
 
     void addEntity(Rob * ety);
 

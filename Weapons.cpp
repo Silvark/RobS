@@ -96,6 +96,24 @@ void Weapon::explode(Game * game) {
       }
     }
   }
+
+  // check dégats
+  for (auto rob : game->getBrain()->getPlayer(1)->getSquad()) {
+    sf::Vector2f pos = rob->getPosition();
+    pos.x += 10; // WARN : dimensions d'un rob hardcoded. C'est pas bien
+    pos.y += 20;
+    if (( midPos.x - pos.x ) * ( midPos.x - pos.x ) + ( midPos.y - pos.y ) * ( midPos.y - pos.y ) <= 4*blastRadius*blastRadius) {
+      rob->setHealth( rob->getHealth() - blastRadius );
+    }
+  }
+  for (auto rob : game->getBrain()->getPlayer(2)->getSquad()) {
+    sf::Vector2f pos = rob->getPosition();
+    pos.x += 10; // WARN : dimensions d'un rob hardcoded. C'est pas bien
+    pos.y += 20;
+    if (( midPos.x - pos.x ) * ( midPos.x - pos.x ) + ( midPos.y - pos.y ) * ( midPos.y - pos.y ) <= 4*blastRadius*blastRadius) {
+      rob->setHealth( rob->getHealth() - blastRadius );
+    }
+  }
   game->getMap()->updateMap(position.x - blastRadius, position.y - blastRadius, 4*blastRadius, 4*blastRadius);
 }
 
