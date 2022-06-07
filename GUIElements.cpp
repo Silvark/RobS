@@ -92,6 +92,7 @@ Inventory::Inventory(sf::Vector2f pos) {
 }
 
 Inventory::~Inventory() {
+  std::cout << "dtor inventory" << '\n';
   delete overlay;
   delete overlay_tex;
 }

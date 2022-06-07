@@ -11,8 +11,9 @@ Entity::Entity() {
 }
 
 Entity::~Entity() {
-  delete texture;
+  std::cout << "dtor entity" << '\n';
   delete sprite;
+  delete texture;
 }
 
 // gravité, effets physiques

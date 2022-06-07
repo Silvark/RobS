@@ -12,14 +12,19 @@ Map::Map(std::string input_file) {
   normals.resize(size.x * size.y);
   updateMap(0, 0, size.x, size.y);
 
-  instadeath = size.y;
+  instadeath = size.y-1;
+}
+
+Map::~Map() {
+  std::cout << "dtor map" << '\n';
+  std::cout << "rien à delete car c'est une des 1eres classes codées et on l'a pas recodée avec des pointers xd" << '\n';
 }
 
 void Map::riseInstadeath() {
   for (int i = 0; i < size.x; i++) {
     setPixel(i, instadeath, 0);
   }
-  updateMap(0, instadeath, size.x, 2);
+  updateMap(0, instadeath, size.x, 1);
   instadeath -= 1;
 }
 

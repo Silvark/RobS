@@ -21,6 +21,10 @@ Weapon::Weapon(sf::Vector2f pos, sf::Vector2f vel) {
   sprite->setPosition(position);
 }
 
+Weapon::~Weapon() {
+  std::cout << "dtor weapon" << '\n';
+}
+
 void Weapon::onCollision(Game * game) {
   explode(game);
   alive = false;
@@ -98,22 +102,25 @@ void Weapon::explode(Game * game) {
   }
 
   // check dégats
-  for (auto rob : game->getBrain()->getPlayer(1)->getSquad()) {
-    sf::Vector2f pos = rob->getPosition();
-    pos.x += 10; // WARN : dimensions d'un rob hardcoded. C'est pas bien
+  // IDEA : créer un knockback à partir de la distance entre le joueur et l'explosion
+  for (auto rone : game->getBrain()->getPlayer(1)->getSquad()) {
+    sf::Vector2f pos = rone->getPosition();
+    pos.x += 10; // WARN : dimensions d'un rone hardcoded. C'est pas bien
     pos.y += 20;
     if (( midPos.x - pos.x ) * ( midPos.x - pos.x ) + ( midPos.y - pos.y ) * ( midPos.y - pos.y ) <= 4*blastRadius*blastRadius) {
-      rob->setHealth( rob->getHealth() - blastRadius );
+      rone->setHealth( rone->getHealth() - blastRadius );
     }
   }
-  for (auto rob : game->getBrain()->getPlayer(2)->getSquad()) {
-    sf::Vector2f pos = rob->getPosition();
-    pos.x += 10; // WARN : dimensions d'un rob hardcoded. C'est pas bien
+  for (auto rtwo : game->getBrain()->getPlayer(2)->getSquad()) {
+    sf::Vector2f pos = rtwo->getPosition();
+    pos.x += 10; // WARN : dimensions d'un rtwo hardcoded. C'est pas bien
     pos.y += 20;
     if (( midPos.x - pos.x ) * ( midPos.x - pos.x ) + ( midPos.y - pos.y ) * ( midPos.y - pos.y ) <= 4*blastRadius*blastRadius) {
-      rob->setHealth( rob->getHealth() - blastRadius );
+      rtwo->setHealth( rtwo->getHealth() - blastRadius );
     }
   }
+
+  // maj map
   game->getMap()->updateMap(position.x - blastRadius, position.y - blastRadius, 4*blastRadius, 4*blastRadius);
 }
 
@@ -142,7 +149,9 @@ Bomb::Bomb(sf::Vector2f pos, sf::Vector2f vel) {
   // std::cout << "VITESSE " << velocity.x << " " << velocity.y << std::endl;
 
 }
-Bomb::~Bomb() {}
+Bomb::~Bomb() {
+  std::cout << "dtor bomb" << '\n';
+}
 
 Deagle::Deagle(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
@@ -164,7 +173,9 @@ Deagle::Deagle(sf::Vector2f pos, sf::Vector2f vel) {
   sf::Vector2f scale = sprite->getScale();
   sprite->setScale(scale.x * 0.5, scale.y * 0.5);
 }
-Deagle::~Deagle() {}
+Deagle::~Deagle() {
+  std::cout << "dtor deagle" << '\n';
+}
 
 Mine::Mine(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
@@ -186,7 +197,9 @@ Mine::Mine(sf::Vector2f pos, sf::Vector2f vel) {
   sf::Vector2f scale = sprite->getScale();
   sprite->setScale(scale.x * 0.5, scale.y * 0.5);
 }
-Mine::~Mine() {}
+Mine::~Mine() {
+  std::cout << "dtor mine" << '\n';
+}
 
 WeaponItem::WeaponItem(int c, int p) {
   count = c;
