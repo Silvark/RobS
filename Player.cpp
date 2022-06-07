@@ -23,7 +23,7 @@ Player::Player(int i) {
 
 Player::~Player() {
   arsenal.clear();
-  squad.clear();
+  // non, on ne free pas squad car ils seront free via le destructeur robs
 }
 
 Rob * Player::nextControlledRob() {

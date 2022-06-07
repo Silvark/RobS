@@ -7,6 +7,7 @@ Entity::Entity() {
   texture = new sf::Texture();
   sprite = new sf::Sprite();
   alive = true;
+  isControlled = false;
 }
 
 Entity::~Entity() {
@@ -15,13 +16,14 @@ Entity::~Entity() {
   delete hitbox;
 }
 
+// gravité, effets physiques
 void Entity::updateVelocity() {
-  // update vitesse
-  if (velocity.x < 2) {
-    // ajout des frottements de l'air? :')
-    velocity.x += 0;
-  }
-  if (velocity.y < 2) {
-    velocity.y += GRAVITY/1e4 * 1/60;
-  }
+  velocity.y += GRAVITY/1e4 * 1/60;
+  // if (velocity.x > 0.05) { velocity.x = 0.05; }
+  // if (velocity.y > 0.5) { velocity.y = 0.5; }
+}
+
+// déplacement
+void Entity::updateVelocity(sf::Vector2f vel) {
+  velocity += vel;
 }

@@ -89,6 +89,29 @@ void GameLogic::placeRob(sf::Vector2f position, Game * game, Player * owner) {
   owner->resetActionCooldown();
 }
 
+void GameLogic::moveRob(Player * player) {
+  Rob * controlRecipient = player->getControlledRob();
+  sf::Vector2f vel = controlRecipient->getAimVector();
+  float mult = controlRecipient->getStrength();
+  sf::Vector2f mov(0, 0);
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+    mov.x -= 0.01;
+  }
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+    mov.x += 0.01;
+  }
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+    std::cout << "[DEBUG] Saut!" << '\n';
+    mov = vel;
+    mov.x *= mult;
+    mov.y *= mult;
+  }
+  controlRecipient->updateVelocity(mov);
+}
+
 int const GameLogic::getFSM() {
   return fsm;
 }
@@ -197,16 +220,16 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
         two->setHasPlayed(false);
       }
 
+      one->getControlledRob()->calculateAimVector(mousePos);
       changeRob(one);
       changeWeapon(one);
+      moveRob(one);
 
       if (events.mouseButton.button == sf::Mouse::Left && one->getActionCooldown() > sf::seconds(0.3)) {
         if (game->isAnythingHovered()) {
           // click pris en compte par GUI
           break;
         }
-
-        one->getControlledRob()->calculateAimVector(mousePos);
 
         Weapon * current = one->getSelectedWeapon()->generateWeapon(game, one);
         if (current && one->getHasPlayed() == true) {
@@ -239,16 +262,16 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
         one->setHasPlayed(false);
       }
 
+      two->getControlledRob()->calculateAimVector(mousePos);
       changeRob(two);
       changeWeapon(two);
+      moveRob(two);
 
       if (events.mouseButton.button == sf::Mouse::Left && two->getActionCooldown() > sf::seconds(0.3)) {
         if (game->isAnythingHovered()) {
           // click pris en compte par GUI
           break;
         }
-
-        two->getControlledRob()->calculateAimVector(mousePos);
 
         Weapon * current = two->getSelectedWeapon()->generateWeapon(game, two);
         if (current && two->getHasPlayed() == true) {

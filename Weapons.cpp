@@ -152,7 +152,7 @@ Mine::Mine(sf::Vector2f pos, sf::Vector2f vel) {
   position = pos;
   velocity = vel;
 
-  mass = 6;
+  mass = 60;
   velocity.x = velocity.x/mass;
   velocity.y = velocity.y/mass;
 

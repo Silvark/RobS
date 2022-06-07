@@ -8,7 +8,7 @@ Rob::Rob(sf::Vector2f pos, sf::Vector2f vel, int type) {
   health = 100;
   energy = 100;
 
-  mass = 1;
+  mass = 10;
 
   isControlled = false;
   strength = 0;
@@ -64,11 +64,13 @@ void Rob::move(Game * game) {
   Map * terrain = game->getMap();
   bool collides = false;
 
+  // calcul du mouvement sur une frame
   sf::Vector2f initialPosition = this->getPosition();
   sf::Vector2f finalPosition;
   sf::Vector2f displacement;
   sf::FloatRect collidePoint = sprite->getLocalBounds();
 
+  // ajustement pour faire les calculs sur le point milieu du rob
   initialPosition.x += collidePoint.width/2;
   initialPosition.y += collidePoint.height;
 
@@ -81,6 +83,7 @@ void Rob::move(Game * game) {
   sf::Vector2f intermediatePosition;
   float resolution = 0.01;
 
+  // check des positions intermédiaires de ce déplacement
   for (float increment = 0; increment < 1; increment = increment + resolution) {
     intermediatePosition.x = initialPosition.x + displacement.x * increment;
     intermediatePosition.y = initialPosition.y + displacement.y * increment;
@@ -90,13 +93,14 @@ void Rob::move(Game * game) {
     && terrain->getPixel(ceil(intermediatePosition.x), ceil(intermediatePosition.y));
     }
     catch (const std::invalid_argument& except) {
-      // oob
+      // out of bounds
       std::cout << "[WARN] Entité hors de la map!" << std::endl;
       collides = false;
       alive = false;
       return;
     }
 
+    // collision sur un des points intermédiaires
     if (collides) {
       intermediatePosition.x -= collidePoint.width/2;
       intermediatePosition.y -= collidePoint.height;
@@ -106,6 +110,7 @@ void Rob::move(Game * game) {
     }
   }
 
+  // pas de collision
   finalPosition.x -= collidePoint.width/2;
   finalPosition.y -= collidePoint.height;
   this->setPosition(finalPosition);
@@ -113,8 +118,7 @@ void Rob::move(Game * game) {
 }
 
 void Rob::onCollision(Game * game) {
-  velocity.x = 0;
-  velocity.y = 0;
+  midAir = false;
 }
 
 void Rob::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -123,10 +127,9 @@ void Rob::draw(sf::RenderTarget& target, sf::RenderStates states) const {
   }
 
   sprite->setPosition(position);
-  selectorSprite->setPosition(sf::Vector2f(position.x, position.y - 20));
   target.draw(*sprite, states);
   if (isControlled) {
-    // TODO : dessiner la flèche qui indique où on tire
+    selectorSprite->setPosition(sf::Vector2f(position.x, position.y - 20));
     target.draw(*selectorSprite, states);
   }
 }

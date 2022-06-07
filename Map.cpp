@@ -15,13 +15,15 @@ Map::Map(std::string input_file) {
 
 size_t Map::coordsToPix(int x, int y) const {
   if (y < 0 || x < 0 || x > size.x || y > size.y) {
-    std::cout << "[DEBUG] Coordonnées accédées (x/y) : " << x << "/" << y << std::endl;
+    // std::cout << "[DEBUG] Coordonnées accédées (x/y) : " << x << "/" << y << std::endl;
     throw std::invalid_argument( "[ERROR] Accès terrain invalide" );
   }
   return y * size.x + x;
 }
 
 void Map::setPixel(int x, int y, int value) {
+  try { coordsToPix(x, y); }
+  catch (const std::invalid_argument& except) { return; }
   collide_map[coordsToPix(x, y)] = value;
   if (value) {
     // cas 1 : construction
@@ -43,7 +45,8 @@ void Map::updateCollideMap(int left, int top, int width, int height) {
   for (int i = left; i < int(left + width); i++) {
     for (int j = top; j < int(top + height); j++) {
       // détermine si le pixel examiné est solide
-      collide_map[coordsToPix(i, j)] = (map.getPixel(i, j).a != 0);
+      try { collide_map[coordsToPix(i, j)] = (map.getPixel(i, j).a != 0); }
+      catch (const std::invalid_argument& except) { continue; }
     }
   }
 }
@@ -52,10 +55,13 @@ void Map::updateNormals(int left, int top, int width, int height) {
   constexpr int MASK_SIZE = 5;
   for (int i = left; i < int(left + width); i++) {
     for (int j = top; j < int(top + height); j++) {
+      try { coordsToPix(i, j); }
+      catch (const std::invalid_argument& except) { continue; }
 
       if (checkSurfaceValidity(i, j) && collide_map[coordsToPix(i, j)]) {
         normals[coordsToPix(i, j)] = computeNormal(i, j, MASK_SIZE);
         // map.setPixel(i, j, sf::Color(255, 0, 0, 128)); // debug
+
       }
     }
   }
@@ -75,6 +81,8 @@ bool Map::checkSurfaceValidity(int x, int y) {
     for (int j = y-1; j <= y+1; j++) {
       indexValidity = (i > 0 && j > 0 && i < int(size.x) && j < int(size.y));
       mask_target = mask[((j - y + 1) * 3) + (i - x + 1)];
+      try { coordsToPix(i, j); }
+      catch (const std::invalid_argument& except) { continue; }
       if (indexValidity && mask_target) {
         if (!collide_map[coordsToPix(i, j)]) {
           nonSolidN = true;

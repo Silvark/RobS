@@ -40,7 +40,8 @@ class GameLogic {
     void physicsMgr(Game * game);
     void changeWeapon(Player * player);
     void changeRob(Player * player);
-    
+    void moveRob(Player * player);
+
     void setControlTarget(Rob * playable);
     Rob * const getControlTarget() const;
 

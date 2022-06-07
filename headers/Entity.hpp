@@ -17,7 +17,8 @@ class Entity : public sf::Drawable {
     float mass;
 
     bool alive;
-    bool inMidair;
+    bool isControlled;
+    bool midAir;
 
   public:
     Entity();
@@ -26,8 +27,15 @@ class Entity : public sf::Drawable {
     bool const isAlive() const { return alive; }
 
     void updateVelocity();
+    void updateVelocity(sf::Vector2f vel);
     void setPosition(sf::Vector2f& pos) { position = pos; }
     sf::Vector2f getPosition() const { return position; }
+
+    void setMidair(bool value) { midAir = value; }
+    bool const getMidair() { return midAir; }
+
+    void setControlledStatus(bool value) { isControlled = value; }
+    bool const getControlledStatus() { return isControlled; }
 
     virtual void move(Game * game) =0;
     virtual void onCollision(Game * game) =0;

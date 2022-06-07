@@ -12,8 +12,6 @@ class Rob : public Entity {
     int health;
     int energy;
 
-    bool isControlled;
-
     sf::Texture * selectorTexture;
     sf::Sprite * selectorSprite;
 
@@ -31,9 +29,6 @@ class Rob : public Entity {
     sf::Vector2f const getAimVector() const { return aimVector; }
 
     void calculateAimVector(sf::Vector2i mousePos);
-
-    void setControlledStatus(bool value) { isControlled = value; }
-    bool const getControlledStatus() { return isControlled; }
 
     void move(Game * game);
     void onCollision(Game * game);
