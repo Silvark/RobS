@@ -16,6 +16,8 @@ class Map : public sf::Drawable { // permet d'avoir un objet customisé et pouva
     std::vector<bool> collide_map; // (1) : collisions "pixel-perfect" requièrent un array de booléens
     std::vector<sf::Vector2f> normals; // (2) : vecteur de vecteurs normaux
 
+    int instadeath;
+
     /*
     (1) : https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Texture.php
     (2) : https://gamedevelopment.tutsplus.com/tutorials/coding-destructible-pixel-terrain-how-to-make-everything-explode--gamedev-45
@@ -39,6 +41,7 @@ class Map : public sf::Drawable { // permet d'avoir un objet customisé et pouva
 
     void updateMap(int left, int top, int width, int height);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void riseInstadeath();
 
     // debug
     void drawNormals(sf::RenderTarget& target) const {

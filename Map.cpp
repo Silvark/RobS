@@ -11,6 +11,16 @@ Map::Map(std::string input_file) {
   collide_map.resize(size.x * size.y);
   normals.resize(size.x * size.y);
   updateMap(0, 0, size.x, size.y);
+
+  instadeath = size.y;
+}
+
+void Map::riseInstadeath() {
+  for (int i = 0; i < size.x; i++) {
+    setPixel(i, instadeath, 0);
+  }
+  updateMap(0, instadeath, size.x, 2);
+  instadeath -= 1;
 }
 
 size_t Map::coordsToPix(int x, int y) const {

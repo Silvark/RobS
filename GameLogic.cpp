@@ -220,6 +220,9 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
       // case 21 tant que one n'a pas joué et peut encore jouer (tour de 30s)
       if (one->getTurnClock() > sf::seconds(30)) {
         std::cout << "[INFO] Fin du tour du joueur 1!\nCause : timeout" << std::endl;
+        for (int i = 0; i < 3; i++) {
+          game->getMap()->riseInstadeath();
+        }
         fsm = 22;
 
         // mettre le bon inventaire
@@ -246,6 +249,9 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
         if (current && one->getHasPlayed() == true) {
           game->addEntity(current);
           std::cout << "[INFO] Fin du tour du joueur 1!\nCause : a joué" << std::endl;
+          for (int i = 0; i < 3; i++) {
+            game->getMap()->riseInstadeath();
+          }
           fsm = 22;
 
           // mettre le bon inventaire
@@ -263,6 +269,9 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
       // case 22 tant que two n'a pas joué et peut encore jouer (tour de 30s)
       if (two->getTurnClock() > sf::seconds(30)) {
         std::cout << "[INFO] Fin du tour du joueur 2!\nCause : timeout" << std::endl;
+        for (int i = 0; i < 3; i++) {
+          game->getMap()->riseInstadeath();
+        }
         fsm = 21;
 
         // mettre le bon inventaire
@@ -289,6 +298,9 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
         if (current && two->getHasPlayed() == true) {
           game->addEntity(current);
           std::cout << "[INFO] Fin du tour du joueur 2!\nCause : a joué" << std::endl;
+          for (int i = 0; i < 3; i++) {
+            game->getMap()->riseInstadeath();
+          }
           fsm = 21;
 
           // mettre le bon inventaire
