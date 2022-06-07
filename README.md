@@ -8,7 +8,7 @@
 C'est la branche fonctionnelle de notre projet. Elle ne comporte pas toutes nos prouesses, mais elle a le mérite de fonctionner sans bugs.
 * **Refactoring**  
 C'est la branche qui est, en théorie, beaucoup mieux codée et optimisée (c'est à dire que les attributs ne sont pas en public, par exemple). Cependant, au 6 juin 2022 à 23h00, elle comporte encore des soucis comme des segfaults, ou une physique bancale.
-* **Rendu**
+* **Rendu**  
 C'est la branche qui concerne nos chers et chères professeur.e.s car c'est sur celle-ci que nous sommes évalués
 
 ## Présentation du jeu
