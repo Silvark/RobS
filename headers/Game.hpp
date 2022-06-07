@@ -30,9 +30,7 @@ class Game {
     void addGUIElement(GUIElement * guielt);
     void addGUIElement(std::vector<GUIElement *> guielts);
     void removeGUIElements();
-    void cleanGUIElements();
     std::vector<GUIElement *> * const getGUI() { return &gui; }
-    bool isAnythingHovered();
 
     void addEntity(Entity * ety);
     void addEntity(std::vector<Entity *> etys);

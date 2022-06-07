@@ -22,8 +22,8 @@ Player::Player(int i) {
 }
 
 Player::~Player() {
+  std::cout << "dtor player" << '\n';
   arsenal.clear();
-  // non, on ne free pas squad car ils seront free via le destructeur robs
 }
 
 Rob * Player::nextControlledRob() {

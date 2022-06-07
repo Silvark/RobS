@@ -12,7 +12,7 @@ class Command {
     Game * game;
   public:
     virtual void execute() =0;
-    virtual ~Command() {}
+    virtual ~Command() { std::cout << "dtor command" << '\n'; }
 };
 
 class ChangeMenu : public Command {

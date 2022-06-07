@@ -13,7 +13,7 @@ class Weapon : public Entity {
   public:
     Weapon();
     Weapon(sf::Vector2f pos, sf::Vector2f vel);
-    ~Weapon() {}
+    virtual ~Weapon();
 
     void move(Game * game);
     void onCollision(Game * game);
@@ -24,19 +24,19 @@ class Weapon : public Entity {
 class Bomb : public Weapon {
   public:
     Bomb(sf::Vector2f pos, sf::Vector2f vel);
-    ~Bomb();
+    virtual ~Bomb();
 };
 
 class Deagle : public Weapon {
   public:
     Deagle(sf::Vector2f pos, sf::Vector2f vel);
-    ~Deagle();
+    virtual ~Deagle();
 };
 
 class Mine : public Weapon {
   public:
     Mine(sf::Vector2f pos, sf::Vector2f vel);
-    ~Mine();
+    virtual ~Mine();
 };
 
 class WeaponItem {

@@ -13,11 +13,13 @@ class GUIElement : public sf::Drawable {
     bool isActive;
   protected:
     sf::Vector2f position;
-    Command* action;
+    Command * action;
     bool hovered;
 
   public:
     GUIElement() { alive = true; }
+    virtual ~GUIElement() { std::cout << "dtor guielement" << '\n';}
+
     const sf::Vector2f& getPosition() const { return position; }
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const =0;
     virtual void onClick() =0;

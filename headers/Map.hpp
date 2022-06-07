@@ -30,6 +30,8 @@ class Map : public sf::Drawable { // permet d'avoir un objet customisé et pouva
 
   public:
     Map(std::string input_file); // constructeur
+    ~Map();
+    
     size_t coordsToPix(int x, int y) const;
 
     sf::Vector2f getNormal(int x, int y) const;

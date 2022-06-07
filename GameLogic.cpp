@@ -5,9 +5,11 @@ GameLogic::GameLogic() {
   one = new Player(1);
   two = new Player(2);
   fsm = 0;
+  controlTarget = nullptr;
 }
 
 GameLogic::~GameLogic() {
+  std::cout << "dtor gamelogic" << '\n';
   delete one;
   delete two;
 }
@@ -36,13 +38,13 @@ void GameLogic::changeWeapon(Player * player) {
     player->getInventory()->setSelectedSlot(3); // suivi sur la structure inv.
     player->setSelectedWeapon(3); // sélection arme concrète
   }
-  else {
-    player->setSelectedWeapon(player->getInventory()->getSelectedSlot()); // update via click
-  }
 }
 
 void GameLogic::changeRob(Player * player) {
   Rob * controlRecipient;
+  if (controlTarget && !controlTarget->isAlive()) {
+    controlRecipient = player->nextControlledRob();
+  }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
     controlRecipient = player->prevControlledRob();
   }
@@ -126,6 +128,42 @@ int const GameLogic::getFSM() {
   return fsm;
 }
 
+void GameLogic::checkWinner() {
+  bool oneWins, twoWins;
+  for (auto rob : one->getSquad()) {
+    if (rob->getHealth() <= 0) {
+      rob->aliveStatus(false);
+    }
+    if (rob->isAlive()) {
+      oneWins = true;
+      break;
+    }
+  }
+  for (auto rob : two->getSquad()) {
+    if (rob->getHealth() <= 0) {
+      rob->aliveStatus(false);
+    }
+    if (rob->isAlive()) {
+      twoWins = true;
+      break;
+    }
+  }
+
+  if (oneWins && twoWins) {
+    return;
+  }
+  if (!oneWins && !twoWins) {
+    fsm = 3;
+    return;
+  }
+  if (oneWins) {
+    fsm = 31;
+  }
+  if (twoWins) {
+    fsm = 32;
+  }
+}
+
 void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
   // Guard clause : y'a t-il des événements?
   if (!(game->getWindow()->pollEvent(events))) {
@@ -139,11 +177,15 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
   }
 
   // détection interactions GUI
+  bool clickWasHandled = false;
   for (auto guiElt : *(game->getGUI())) {
     guiElt->hoveredStatus(mousePos);
-    if (guiElt->isHovered() && events.type == sf::Event::MouseButtonPressed) {
-      if (events.mouseButton.button == sf::Mouse::Left) {
+    if (guiElt->isAlive() && events.type == sf::Event::MouseButtonPressed) {
+      if (guiElt->isHovered() && events.mouseButton.button == sf::Mouse::Left) {
         guiElt->onClick();
+        one->resetActionCooldown();
+        two->resetActionCooldown();
+        clickWasHandled = true;
       }
     }
   }
@@ -224,6 +266,7 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
           game->getMap()->riseInstadeath();
         }
         fsm = 22;
+        checkWinner();
 
         // mettre le bon inventaire
         one->getInventory()->setActiveStatus(false);
@@ -239,20 +282,22 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
       changeWeapon(one);
       moveRob(one);
 
-      if (events.mouseButton.button == sf::Mouse::Left && one->getActionCooldown() > sf::seconds(0.3)) {
-        if (game->isAnythingHovered()) {
+      if (events.mouseButton.button == sf::Mouse::Left) {
+        if (clickWasHandled) {
           // click pris en compte par GUI
+          one->setSelectedWeapon(one->getInventory()->getSelectedSlot()); // update via click
           break;
         }
 
         Weapon * current = one->getSelectedWeapon()->generateWeapon(game, one);
-        if (current && one->getHasPlayed() == true) {
+        if (current && one->getHasPlayed() == true && one->getActionCooldown() > sf::seconds(0.3)) {
           game->addEntity(current);
           std::cout << "[INFO] Fin du tour du joueur 1!\nCause : a joué" << std::endl;
           for (int i = 0; i < 3; i++) {
             game->getMap()->riseInstadeath();
           }
           fsm = 22;
+          checkWinner();
 
           // mettre le bon inventaire
           one->getInventory()->setActiveStatus(false);
@@ -283,6 +328,7 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
           game->getMap()->riseInstadeath();
         }
         fsm = 21;
+        checkWinner();
 
         // mettre le bon inventaire
         two->getInventory()->setActiveStatus(false);
@@ -298,20 +344,22 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
       changeWeapon(two);
       moveRob(two);
 
-      if (events.mouseButton.button == sf::Mouse::Left && two->getActionCooldown() > sf::seconds(0.3)) {
-        if (game->isAnythingHovered()) {
+      if (events.mouseButton.button == sf::Mouse::Left) {
+        if (clickWasHandled) {
           // click pris en compte par GUI
+          two->setSelectedWeapon(two->getInventory()->getSelectedSlot()); // update via click
           break;
         }
 
         Weapon * current = two->getSelectedWeapon()->generateWeapon(game, two);
-        if (current && two->getHasPlayed() == true) {
+        if (current && two->getHasPlayed() == true && two->getActionCooldown() > sf::seconds(0.3)) {
           game->addEntity(current);
           std::cout << "[INFO] Fin du tour du joueur 2!\nCause : a joué" << std::endl;
           for (int i = 0; i < 3; i++) {
             game->getMap()->riseInstadeath();
           }
           fsm = 21;
+          checkWinner();
 
           // mettre le bon inventaire
           two->getInventory()->setActiveStatus(false);
@@ -325,15 +373,15 @@ void GameLogic::eventMgr(Game * game, const sf::Vector2i& mousePos) {
       break;
 
     case 3: // partie terminée
-
+      std::cout << "ÉGALITÉ!" << '\n';
       break;
 
     case 31: // j1 gagne
-
+      std::cout << "JOUEUR 1 GAGNE!" << '\n';
       break;
 
     case 32: // j2 gagne
-
+      std::cerr << "JOUEUR 2 GAGNE!" << '\n';
       break;
 
     default:

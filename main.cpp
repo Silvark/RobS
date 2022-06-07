@@ -159,12 +159,11 @@ int main() {
   }
 
   // Destructeurs (parce qu'on utilise pas encore de smart pointers)
-  delete robs;
   delete bgimg_tex;
   delete map01_tex;
   delete map02_tex;
   delete robslogo_tex;
   delete introOne_tex;
   delete introTwo_tex;
-  delete gameBg_tex;
+  delete robs;
 }

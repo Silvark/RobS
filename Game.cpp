@@ -7,19 +7,27 @@ Game::Game() {
 }
 
 Game::~Game() {
-  removeEntities();
-  std::cout << "[CLEAN] Entités" << std::endl;
-  removeGUIElements();
-  std::cout << "[CLEAN] Éléments GUI" << std::endl;
-
+  std::cout << "dtor game" << '\n';
   delete terrain;
-  std::cout << "[CLEAN] Map" << std::endl;
-  delete bgimg;
-  std::cout << "[CLEAN] Image de fond" << std::endl;
   delete brain;
-  std::cout << "[CLEAN] GameLogic" << std::endl;
+  delete bgimg;
+
+  std::cout << "destroying gui elements" << '\n';
+  for (auto elt : gui) {
+    delete elt;
+  }
+
+  std::cout << "destroying entities" << '\n';
+  for (auto elt : entities) {
+    delete elt;
+  }
+
+  std::cerr << "destroying other elements" << '\n';
+  for (auto elt : elements) {
+    delete elt;
+  }
+
   window->close();
-  std::cout << "[CLEAN] Fenêtre" << std::endl;
 }
 
 void Game::update() {
@@ -49,7 +57,7 @@ void Game::update() {
   }
 
   for (auto elt : gui) {
-    if (elt->getActiveStatus() == true) {
+    if (elt->getActiveStatus() == true && elt->isAlive() == true) {
       // pas de tracé pour les éléments HS
       window->draw(*elt, sf::RenderStates::Default);
     }
@@ -64,24 +72,11 @@ void Game::addGUIElement(std::vector<GUIElement *> guielts) {
     addGUIElement(elt);
   }
 }
-void Game::removeGUIElements() { gui.clear(); }
-void Game::cleanGUIElements() {
-  int i = 0;
+void Game::removeGUIElements() {
   for (auto elt : gui) {
-    if (!elt->isAlive()) {
-      gui.erase(gui.begin() + i);
-    }
-    i++;
+    elt->aliveStatus(false);
+    elt->setActiveStatus(false);
   }
-}
-
-bool Game::isAnythingHovered() {
-  for (auto elt : gui) {
-    if (elt->isHovered()) {
-      return true;
-    }
-  }
-  return false;
 }
 
 void Game::addEntity(Entity * ety) { entities.push_back(ety); }
@@ -90,7 +85,11 @@ void Game::addEntity(std::vector<Entity *> etys) {
     addEntity(elt);
   }
 }
-void Game::removeEntities() { entities.clear(); }
+void Game::removeEntities() {
+  for (auto elt : entities) {
+    elt->aliveStatus(false);
+  }
+}
 
 void Game::addElement(sf::Sprite * elt) { elements.push_back(elt); }
 void Game::addElement(std::vector<sf::Sprite *> elts) {
@@ -98,7 +97,11 @@ void Game::addElement(std::vector<sf::Sprite *> elts) {
     addElement(elt);
   }
 }
-void Game::removeElements() { elements.clear(); }
+void Game::removeElements() {
+  for (auto elt : elements) {
+    elt->setColor(sf::Color::Transparent);
+  }
+}
 
 void Game::setMap(std::string path) {
   terrain = new Map(path);

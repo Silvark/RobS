@@ -39,8 +39,7 @@ Rob::Rob(sf::Vector2f pos, sf::Vector2f vel, int type) {
 }
 
 Rob::~Rob() {
-  delete sprite;
-  delete texture;
+  std::cout << "dtor rob" << '\n';
   delete selectorSprite;
   delete selectorTexture;
 }
@@ -61,6 +60,10 @@ void Rob::calculateAimVector(sf::Vector2i mousePos) {
 }
 
 void Rob::move(Game * game) {
+  if (position.y < -50 || position.y > game->getMap()->getSize().y + 50
+  ||  position.x < -50 || position.y > game->getMap()->getSize().x + 50)
+  { alive = false; return; }
+
   Map * terrain = game->getMap();
   sf::FloatRect dims = sprite->getLocalBounds();
   bool colTL, colTR, colBL, colBR;
